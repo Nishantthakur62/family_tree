@@ -1,12 +1,51 @@
 import styled from 'styled-components';
 
 export const NodeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+  min-width: 190px;
+`;
+
+export const GenerationRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+  width: max-content;
+  padding: 0 1rem;
+`;
+
+export const Branch = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 190px;
-  padding: 0 0.5rem;
+`;
+
+export const PartnerRow = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -1.5rem;
+    width: 1px;
+    height: 1.5rem;
+    background: rgba(100, 123, 107, 0.45);
+  }
+
+  .partnerLink {
+    color: #bd5b3c;
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
 `;
 
 export const NodeBox = styled.div`
@@ -65,21 +104,21 @@ export const NodeBox = styled.div`
 `;
 
 export const ChildrenWrapper = styled.div`
-  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 1.5rem;
-  margin-top: 2.5rem;
+  position: relative;
+  margin-top: 1.5rem;
   padding: 1.5rem 0.5rem 0;
-  border-top: 1px solid rgba(100, 123, 107, 0.45);
+  border-top: 1px solid rgba(100, 123, 107, 0.5);
 
   &::before {
     content: '';
     position: absolute;
-    top: -2.5rem;
+    top: -1.5rem;
     left: 50%;
     width: 1px;
-    height: 2.5rem;
+    height: 1.5rem;
     background: rgba(100, 123, 107, 0.45);
   }
 

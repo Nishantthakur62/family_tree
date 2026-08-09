@@ -89,9 +89,13 @@ export const BoardHint = styled.p`
 
 export const TreeViewport = styled.div`
   width: 100%;
+  max-width: 100%;
   min-height: 280px;
   padding: 2rem 1rem 3rem;
   overflow-x: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   background-color: #f4f1e9;
   background-image: linear-gradient(rgba(100, 113, 100, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(100, 113, 100, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -99,6 +103,11 @@ export const TreeViewport = styled.div`
   border-radius: 8px;
 
   > div {
+    flex: 0 0 auto;
     margin: 0 auto;
+  }
+
+  @media (max-width: 560px) {
+    justify-content: flex-start;
   }
 `;

@@ -164,12 +164,12 @@ const HomePage = () => {
     } catch {
       demoVersion = 0;
     }
-    if (demoVersion < 3) {
+    if (demoVersion < 4) {
       localStorage.setItem(demoKey, JSON.stringify({
         fullName: 'Demo Family',
         phoneNumber: demoPhone,
         familyName,
-        demoVersion: 3,
+        demoVersion: 4,
         tree: tree(),
       }));
     }

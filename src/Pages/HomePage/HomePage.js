@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { HomeContainer, BackgroundImage, Button, WelcomeMessage, Content, Eyebrow, Actions, SecondaryButton, DemoButton, StoryPanel, StoryLabel, StoryTitle, StoryCopy, Stats } from './HomePage.style';
+import { HomeContainer, Button, WelcomeMessage, Content, Eyebrow, Actions, SecondaryButton, DemoButton, StoryPanel, StoryLabel, StoryTitle, StoryCopy, Stats } from './HomePage.style';
 import IntroForm from '../../Components/IntroForm/IntroForm';
 
 const demoNode = (id, name, children = [], extra = {}) => ({ id, name, children, siblings: [], ...extra });
@@ -42,7 +42,6 @@ const HomePage = () => {
 
   return (
     <HomeContainer>
-      <BackgroundImage />
       <WelcomeMessage>
         <Content>
           <Eyebrow>Your family, in one place</Eyebrow>

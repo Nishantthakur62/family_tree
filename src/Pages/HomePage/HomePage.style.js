@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import bgImage from '../../Assets/Images/family-tree-bg.jpg';
 
 export const HomeContainer = styled.div`
   position: relative;
@@ -8,6 +7,7 @@ export const HomeContainer = styled.div`
   overflow: hidden;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: clamp(6rem, 10vw, 9rem) clamp(1.25rem, 8vw, 8rem) clamp(4rem, 8vw, 7rem);
   background: #f6f4ef;
 
@@ -19,31 +19,6 @@ export const HomeContainer = styled.div`
     background-size: 24px 24px;
     mask-image: linear-gradient(90deg, #000 0%, transparent 70%);
     pointer-events: none;
-  }
-`;
-
-export const BackgroundImage = styled.div`
-  position: absolute;
-  right: clamp(1.25rem, 7vw, 7rem);
-  top: clamp(7rem, 12vw, 10rem);
-  height: min(62vh, 610px);
-  width: min(38vw, 520px);
-  background-image: url(${bgImage});
-  background-size: cover;
-  background-position: center;
-  border-radius: 120px 18px 18px 18px;
-  box-shadow: 18px 18px 0 #d9e0d4;
-  filter: saturate(0.78);
-  z-index: 0;
-
-  @media (max-width: 760px) {
-    position: relative;
-    right: auto;
-    top: auto;
-    order: 2;
-    width: 100%;
-    height: 300px;
-    margin-top: 2.5rem;
   }
 `;
 

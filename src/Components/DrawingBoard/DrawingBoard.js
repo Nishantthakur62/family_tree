@@ -6,7 +6,7 @@ import { BoardWrapper, BoardHeader, BoardTitle, BoardHint, BoardTools, CanvasHin
 import { generateUUID } from '../../utils/uuid';
 import MemberAddForm from '../MemberAddForm/MemberAddForm';
 import MoreDetailsForm from '../MoreDetailsForm/MoreDetailsForm';
-import { createArchive, getUniqueProfileId, isValidTree, PROFILE_PREFIX, EXPORT_PREFIX } from '../../utils/familyData';
+import { createArchive, getUniqueProfileId, isValidTree, normalizeTree, PROFILE_PREFIX, EXPORT_PREFIX } from '../../utils/familyData';
 
 const findNode = (node, id) => {
   if (!node) return null;
@@ -367,6 +367,10 @@ const DrawingBoard = ({ phone }) => {
 
   const handleExport = () => {
     if (!tree || !phone) return;
+    if (!isValidTree(tree)) {
+      setStatus('Export failed: the tree data is invalid');
+      return;
+    }
 
     const profileKey = `${PROFILE_PREFIX}${phone}`;
     const profileValue = localStorage.getItem(profileKey);
@@ -411,14 +415,15 @@ const DrawingBoard = ({ phone }) => {
       try {
         const imported = JSON.parse(reader.result);
         if (imported.format && imported.format !== 'familyroots-tree') throw new Error('Invalid format');
-        if (!imported.familyName || !isValidTree(imported.tree)) throw new Error('Invalid archive');
+        const importedTree = normalizeTree(imported.tree);
+        if (!imported.familyName || !isValidTree(importedTree)) throw new Error('Invalid archive');
 
         const importedPhone = getUniqueProfileId(imported.phone || `imported-${Date.now()}`);
         localStorage.setItem(`${PROFILE_PREFIX}${importedPhone}`, JSON.stringify({
           fullName: imported.fullName || '',
           phoneNumber: importedPhone,
           familyName: imported.familyName,
-          tree: imported.tree,
+          tree: importedTree,
         }));
         setStatus('JSON archive imported');
         navigate(`/builder/${importedPhone}`);

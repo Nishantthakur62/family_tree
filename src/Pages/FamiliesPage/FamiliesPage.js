@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page, Eyebrow, Heading, Intro, Toolbar, ImportButton, HiddenInput, FamilyGrid, FamilyCard, CardTop, FamilyName, FamilyMeta, CardActions, ActionButton, EmptyState, RenameInput } from './FamiliesPage.style';
-import { getUniqueProfileId, isValidTree, PROFILE_PREFIX } from '../../utils/familyData';
+import { getUniqueProfileId, isValidTree, normalizeTree, PROFILE_PREFIX } from '../../utils/familyData';
 
 const FamiliesPage = () => {
   const fileInput = useRef(null);
@@ -37,13 +37,14 @@ const FamiliesPage = () => {
       try {
         const imported = JSON.parse(reader.result);
         if (imported.format && imported.format !== 'familyroots-tree') throw new Error('Invalid archive format');
-        if (!imported.familyName || !isValidTree(imported.tree)) throw new Error('Invalid archive');
+        const tree = normalizeTree(imported.tree);
+        if (!imported.familyName || !isValidTree(tree)) throw new Error('Invalid archive');
         const phone = getUniqueProfileId(imported.phone || `imported-${Date.now()}`);
         localStorage.setItem(`${PROFILE_PREFIX}${phone}`, JSON.stringify({
           fullName: imported.fullName || '',
           phoneNumber: phone,
           familyName: imported.familyName,
-          tree: imported.tree,
+          tree,
         }));
         refreshProfiles();
       } catch {

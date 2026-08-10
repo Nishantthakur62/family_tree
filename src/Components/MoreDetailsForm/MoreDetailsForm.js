@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FormWrapper, FormHeader, Input, Textarea, Label, Button, ImagePreview, FileInput, Actions } from './MoreDetailsForm.style';
+import { FormWrapper, FormHeader, Input, Textarea, Label, Button, ImagePreview, FileInput, Actions, CloseButton } from './MoreDetailsForm.style';
 
 const isExactDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value);
 
-const MoreDetailsForm = ({ member, onUpdate, onDelete }) => {
+const MoreDetailsForm = ({ member, onUpdate, onDelete, onClose }) => {
   const [formData, setFormData] = useState({
     name: member.name || '',
     dob: member.dob || '',
@@ -61,6 +61,7 @@ const MoreDetailsForm = ({ member, onUpdate, onDelete }) => {
       <FormHeader>
         <strong>Details for {member.name}</strong>
         <span>Every field except name is optional</span>
+        <CloseButton type="button" onClick={onClose} aria-label="Close details">×</CloseButton>
       </FormHeader>
       <form onSubmit={handleSubmit}>
         <Label htmlFor="detail-name">Name</Label>

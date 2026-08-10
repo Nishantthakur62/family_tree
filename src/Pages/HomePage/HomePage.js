@@ -2,21 +2,70 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { HomeContainer, Button, WelcomeMessage, Content, Eyebrow, Actions, SecondaryButton, DemoButton, StoryPanel, StoryLabel, StoryTitle, StoryCopy, Stats } from './HomePage.style';
 import IntroForm from '../../Components/IntroForm/IntroForm';
+import avatar1 from '../../Assets/Icons/avatar1.png';
+import avatar2 from '../../Assets/Icons/avatar2.png';
+import avatar3 from '../../Assets/Icons/avatar3.png';
+import avatar4 from '../../Assets/Icons/avatar4.png';
+import avatar5 from '../../Assets/Icons/avatar5.png';
+import avatar6 from '../../Assets/Icons/avatar6.png';
+import avatar7 from '../../Assets/Icons/avatar7.png';
+import avatar8 from '../../Assets/Icons/avatar8.png';
+import avatar9 from '../../Assets/Icons/avatar9.png';
 
-const demoNode = (id, name, children = [], extra = {}) => ({ id, name, children, siblings: [], ...extra });
+const demoNode = (id, name, children = [], extra = {}) => ({
+  id,
+  name,
+  children,
+  siblings: [],
+  dob: 'Unknown',
+  relation: 'Family member',
+  alias: '',
+  occupation: 'Family historian',
+  location: 'Cedar Falls',
+  notes: 'A treasured part of the Morgan family story.',
+  image: avatar1,
+  ...extra,
+});
 
 const createDemoTree = () => {
   const root = demoNode('demo-root', 'The Morgan Family', [
     demoNode('demo-elaine', 'Elaine Morgan', [
-      demoNode('demo-lena', 'Lena Morgan', [demoNode('demo-noah', 'Noah Morgan')]),
-      demoNode('demo-owen', 'Owen Morgan'),
-    ], { dob: '1954', notes: 'A family historian who kept the old letters.' }),
+      demoNode('demo-lena', 'Lena Morgan', [
+        demoNode('demo-noah', 'Noah Morgan', [], { dob: '2014', relation: 'Great-grandchild', occupation: 'Student', image: avatar4 }),
+        demoNode('demo-nora', 'Nora Morgan', [], { dob: '2017', relation: 'Great-grandchild', occupation: 'Student', location: 'Portland', image: avatar5 }),
+      ], { dob: '1980-06-18', relation: 'Grandchild', alias: 'Lee', occupation: 'Architect', location: 'Portland', image: avatar2, notes: 'Sketched the family map during a rainy weekend.' }),
+      demoNode('demo-owen', 'Owen Morgan', [
+        demoNode('demo-piper', 'Piper Morgan', [], { dob: '2012', relation: 'Great-grandchild', occupation: 'Student', image: avatar6 }),
+      ], { dob: '1984-02-03', relation: 'Grandchild', occupation: 'Marine biologist', location: 'Astoria', image: avatar3 }),
+    ], { dob: '1954-09-12', relation: 'Daughter', alias: 'Ellie', occupation: 'Librarian', location: 'Cedar Falls', image: avatar2, notes: 'Kept the old letters and labelled every photograph.' }),
     demoNode('demo-james', 'James Morgan', [
-      demoNode('demo-mara', 'Mara Morgan', [demoNode('demo-ivy', 'Ivy Morgan')]),
-      demoNode('demo-theo', 'Theo Morgan'),
-    ]),
-  ], { notes: 'Demo family with three generations ready to explore.' });
-  root.spouse = demoNode('demo-spouse', 'Samuel Morgan');
+      demoNode('demo-mara', 'Mara Morgan', [
+        demoNode('demo-ivy', 'Ivy Morgan', [], { dob: '2010', relation: 'Great-grandchild', occupation: 'Student', image: avatar7 }),
+        demoNode('demo-isaac', 'Isaac Morgan', [], { dob: '2013', relation: 'Great-grandchild', occupation: 'Student', image: avatar8 }),
+      ], { dob: '1982-11-27', relation: 'Grandchild', alias: 'Mars', occupation: 'Civic designer', location: 'Chicago', image: avatar4 }),
+      demoNode('demo-theo', 'Theo Morgan', [
+        demoNode('demo-june', 'June Morgan', [], { dob: '2018', relation: 'Great-grandchild', occupation: 'Student', image: avatar9 }),
+      ], { dob: '1987-04-15', relation: 'Grandchild', occupation: 'Chef', location: 'Chicago', image: avatar5 }),
+    ], { dob: '1958-03-21', relation: 'Son', occupation: 'Railway engineer', location: 'Chicago', image: avatar3, notes: 'Built model trains with every grandchild.' }),
+    demoNode('demo-ruth', 'Ruth Morgan', [
+      demoNode('demo-ava', 'Ava Morgan', [
+        demoNode('demo-rose', 'Rose Morgan', [], { dob: '2016', relation: 'Great-grandchild', occupation: 'Student', image: avatar6 }),
+        demoNode('demo-reed', 'Reed Morgan', [], { dob: '2019', relation: 'Great-grandchild', occupation: 'Student', image: avatar7 }),
+      ], { dob: '1990-08-09', relation: 'Grandchild', occupation: 'Photographer', location: 'Seattle', image: avatar8 }),
+      demoNode('demo-ben', 'Ben Morgan', [], { dob: '1993-12-01', relation: 'Grandchild', occupation: 'Teacher', location: 'Seattle', image: avatar9 }),
+    ], { dob: '1961-07-05', relation: 'Daughter', alias: 'Ruthie', occupation: 'Botanist', location: 'Seattle', image: avatar4, notes: 'Plants a tree for every new family member.' }),
+    demoNode('demo-paul', 'Paul Morgan', [
+      demoNode('demo-sage', 'Sage Morgan', [
+        demoNode('demo-wren', 'Wren Morgan', [], { dob: '2020', relation: 'Great-grandchild', occupation: 'Student', image: avatar2 }),
+      ], { dob: '1991-05-22', relation: 'Grandchild', occupation: 'Sound engineer', location: 'Austin', image: avatar5 }),
+      demoNode('demo-milo', 'Milo Morgan', [], { dob: '1995-10-11', relation: 'Grandchild', occupation: 'Game developer', location: 'Austin', image: avatar6 }),
+    ], { dob: '1965-01-30', relation: 'Son', occupation: 'Cartographer', location: 'Austin', image: avatar7, notes: 'Draws maps of every place the family has lived.' }),
+  ], { dob: '1930-05-14', relation: 'Family root', alias: 'Moe', occupation: 'Teacher and storyteller', location: 'Cedar Falls', image: avatar1, notes: 'Demo family with four generations, rich details, and many branches ready to explore.' });
+  root.spouse = demoNode('demo-spouse', 'Samuel Morgan', [], { dob: '1932-10-02', relation: 'Spouse', occupation: 'Woodworker', location: 'Cedar Falls', image: avatar8, notes: 'Made the oak box where the family photographs are kept.' });
+  root.children[0].spouse = demoNode('demo-elaine-spouse', 'Daniel Hart', [], { dob: '1952-01-28', relation: 'Spouse', occupation: 'Archivist', location: 'Cedar Falls', image: avatar9 });
+  root.children[1].spouse = demoNode('demo-james-spouse', 'Mina Cole', [], { dob: '1959-06-08', relation: 'Spouse', occupation: 'Garden designer', location: 'Chicago', image: avatar6 });
+  root.children[2].spouse = demoNode('demo-ruth-spouse', 'Elias Stone', [], { dob: '1960-02-19', relation: 'Spouse', occupation: 'Restorer', location: 'Seattle', image: avatar2 });
+  root.children[3].spouse = demoNode('demo-paul-spouse', 'Clara Wells', [], { dob: '1967-09-26', relation: 'Spouse', occupation: 'Museum curator', location: 'Austin', image: avatar3 });
   return root;
 };
 
@@ -30,13 +79,21 @@ const HomePage = () => {
   }, [searchParams]);
 
   const openDemo = () => {
-    const demoPhone = 'demo-morgan-3gen';
+    const demoPhone = 'demo-morgan-4gen';
     const demoKey = `family-profile-${demoPhone}`;
-    if (!localStorage.getItem(demoKey)) {
+    const existingDemo = localStorage.getItem(demoKey);
+    let demoVersion = 0;
+    try {
+      demoVersion = JSON.parse(existingDemo || '{}').demoVersion || 0;
+    } catch {
+      demoVersion = 0;
+    }
+    if (demoVersion < 2) {
       localStorage.setItem(demoKey, JSON.stringify({
         fullName: 'Demo Family',
         phoneNumber: demoPhone,
-        familyName: 'Morgan Family Demo',
+        familyName: 'Morgan Family Demo · Four Generations',
+        demoVersion: 2,
         tree: createDemoTree(),
       }));
     }

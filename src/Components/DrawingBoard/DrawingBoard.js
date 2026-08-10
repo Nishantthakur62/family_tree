@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FiDownload, FiMinus, FiPlus, FiMaximize, FiCrosshair } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiDownload, FiMinus, FiPlus, FiMaximize, FiCrosshair, FiMove, FiTarget, FiUpload } from 'react-icons/fi';
 import FamilyMember from '../FamilyMember/FamilyMember';
-import { BoardWrapper, BoardHeader, BoardTitle, BoardHint, BoardTools, TreeViewport, TreeStage, TreeCanvas, ExportButton, ZoomLabel, ZoomControls, ZoomButton, FitButton, UnlinkedSection, UnlinkedList } from './DrawingBoard.style';
+import { BoardWrapper, BoardHeader, BoardTitle, BoardHint, BoardTools, CanvasHint, TreeViewport, TreeStage, TreeCanvas, ExportButton, HiddenInput, ZoomLabel, ZoomControls, ZoomButton, FitButton, ModeButton, UnlinkedSection, UnlinkedList, EmptyState, DetailsOverlay } from './DrawingBoard.style';
 import { generateUUID } from '../../utils/uuid';
 import MemberAddForm from '../MemberAddForm/MemberAddForm';
 import MoreDetailsForm from '../MoreDetailsForm/MoreDetailsForm';
+import { createArchive, getUniqueProfileId, isValidTree, PROFILE_PREFIX, EXPORT_PREFIX } from '../../utils/familyData';
 
 const findNode = (node, id) => {
   if (!node) return null;
@@ -24,10 +26,16 @@ const DrawingBoard = ({ phone }) => {
   const MIN_ZOOM = 0.45;
   const MAX_ZOOM = 1.5;
   const [tree, setTree] = useState(null);
+  const [profileMissing, setProfileMissing] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [panMode, setPanMode] = useState(false);
   const [status, setStatus] = useState('All changes save automatically');
   const [zoom, setZoom] = useState(1);
+  const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const importInputRef = useRef(null);
+  const navigate = useNavigate();
   const viewportRef = useRef(null);
   const canvasRef = useRef(null);
   const panRef = useRef(null);
@@ -52,12 +60,13 @@ const DrawingBoard = ({ phone }) => {
 
   const handleFitTree = () => {
     manualZoomRef.current = false;
+    setCanvasOffset({ x: 0, y: 0 });
     fitTree();
   };
 
   const persistTree = (updatedTree) => {
     if (!phone) return;
-    const profileKey = `family-profile-${phone}`;
+    const profileKey = `${PROFILE_PREFIX}${phone}`;
     const profileValue = localStorage.getItem(profileKey);
     if (!profileValue) return;
 
@@ -70,18 +79,27 @@ const DrawingBoard = ({ phone }) => {
   };
 
   useEffect(() => {
-    const profileKey = phone ? `family-profile-${phone}` : Object.keys(localStorage)
-      .find(key => key.startsWith('family-profile-'));
+    const profileKey = phone ? `${PROFILE_PREFIX}${phone}` : Object.keys(localStorage)
+      .find(key => key.startsWith(PROFILE_PREFIX));
     
     if (profileKey) {
       const profileValue = localStorage.getItem(profileKey);
-      if (!profileValue) return;
+      if (!profileValue) {
+        setProfileMissing(true);
+        return;
+      }
 
       let prof;
       try {
         prof = JSON.parse(profileValue);
       } catch {
         setStatus('Saved profile could not be read');
+        setProfileMissing(true);
+        return;
+      }
+      if (!prof || typeof prof !== 'object') {
+        setStatus('Saved profile could not be read');
+        setProfileMissing(true);
         return;
       }
       const root = {
@@ -93,6 +111,12 @@ const DrawingBoard = ({ phone }) => {
       const savedTree = prof.tree && prof.tree.id ? prof.tree : root;
       setTree(savedTree);
       setSelectedId(savedTree.id);
+      setProfileMissing(false);
+      if (!prof.tree || !prof.tree.id) {
+        localStorage.setItem(profileKey, JSON.stringify({ ...prof, tree: root }));
+      }
+    } else {
+      setProfileMissing(true);
     }
   }, [phone]);
 
@@ -107,7 +131,26 @@ const DrawingBoard = ({ phone }) => {
     const handleWheel = (event) => {
       if (!event.ctrlKey && !event.metaKey) return;
       event.preventDefault();
-      setZoom((currentZoom) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number((currentZoom - event.deltaY * 0.0015).toFixed(2)))));
+      const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number((zoom - event.deltaY * 0.0015).toFixed(2))));
+      if (nextZoom === zoom) return;
+
+      const viewportRect = viewport.getBoundingClientRect();
+      const cursorX = event.clientX - viewportRect.left;
+      const cursorY = event.clientY - viewportRect.top;
+      const contentX = viewport.scrollLeft + cursorX;
+      const contentY = viewport.scrollTop + cursorY;
+      const zoomRatio = nextZoom / zoom;
+
+      setZoom(nextZoom);
+      window.requestAnimationFrame(() => {
+        const maxScrollLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+        const maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+        viewport.scrollTo({
+          left: Math.min(maxScrollLeft, Math.max(0, contentX * zoomRatio - cursorX)),
+          top: Math.min(maxScrollTop, Math.max(0, contentY * zoomRatio - cursorY)),
+          behavior: 'auto',
+        });
+      });
     };
     viewport.addEventListener('wheel', handleWheel, { passive: false });
     fitTree();
@@ -115,7 +158,7 @@ const DrawingBoard = ({ phone }) => {
       observer.disconnect();
       viewport.removeEventListener('wheel', handleWheel);
     };
-  }, [tree, fitTree]);
+  }, [tree, fitTree, zoom]);
 
   const handleAdd = ({ name, relation, selectedId: selId }) => {
     if (!tree) return;
@@ -172,6 +215,7 @@ const DrawingBoard = ({ phone }) => {
     if (!updateRec(treeCopy)) return;
     setTree(treeCopy);
     persistTree(treeCopy);
+    setDetailsOpen(false);
     setStatus(`${details.name} details saved`);
   };
 
@@ -209,32 +253,88 @@ const DrawingBoard = ({ phone }) => {
     setTree(treeCopy);
     setSelectedId(treeCopy.id);
     persistTree(treeCopy);
+    setDetailsOpen(false);
     setStatus(`${member.name} and their branch were deleted`);
   };
 
-  const centerSelected = () => {
+  const centerSelected = useCallback(() => {
     const viewport = viewportRef.current;
     const selectedNode = viewport?.querySelector('button[aria-pressed="true"]');
     if (!viewport || !selectedNode) return;
 
     const viewportRect = viewport.getBoundingClientRect();
     const nodeRect = selectedNode.getBoundingClientRect();
-    viewport.scrollLeft += nodeRect.left + nodeRect.width / 2 - (viewportRect.left + viewportRect.width / 2);
-    viewport.scrollTop += nodeRect.top + nodeRect.height / 2 - (viewportRect.top + viewportRect.height / 2);
-  };
+    const horizontalDelta = nodeRect.left + nodeRect.width / 2 - (viewportRect.left + viewportRect.width / 2);
+    const verticalDelta = nodeRect.top + nodeRect.height / 2 - (viewportRect.top + viewportRect.height / 2);
+    const maxScrollLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    const maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+    const nextScrollLeft = Math.min(maxScrollLeft, Math.max(0, viewport.scrollLeft + horizontalDelta / zoom));
+    const nextScrollTop = Math.min(maxScrollTop, Math.max(0, viewport.scrollTop + verticalDelta / zoom));
+    const scrollMovedX = Math.abs(nextScrollLeft - viewport.scrollLeft) > 1;
+    const scrollMovedY = Math.abs(nextScrollTop - viewport.scrollTop) > 1;
+
+    if (!scrollMovedX || !scrollMovedY) {
+      setCanvasOffset((currentOffset) => ({
+        x: scrollMovedX ? currentOffset.x : currentOffset.x - horizontalDelta,
+        y: scrollMovedY ? currentOffset.y : currentOffset.y - verticalDelta,
+      }));
+    }
+
+    viewport.scrollTo({
+      left: nextScrollLeft,
+      top: nextScrollTop,
+      behavior: 'smooth',
+    });
+  }, [zoom]);
 
   const handleSelect = (id) => {
     setSelectedId(id);
-    window.requestAnimationFrame(centerSelected);
+    if (!panMode) window.requestAnimationFrame(centerSelected);
   };
 
+  useEffect(() => {
+    const handleCanvasKeys = (event) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName)) return;
+      if (event.key === '+' || event.key === '=') {
+        event.preventDefault();
+        updateZoom(zoom + 0.1);
+      }
+      if (event.key === '-' || event.key === '_') {
+        event.preventDefault();
+        updateZoom(zoom - 0.1);
+      }
+      if (event.key === '0') {
+        manualZoomRef.current = false;
+        fitTree();
+      }
+      if (event.key.toLowerCase() === 'c') centerSelected();
+    };
+    document.addEventListener('keydown', handleCanvasKeys);
+    return () => document.removeEventListener('keydown', handleCanvasKeys);
+  }, [centerSelected, fitTree, zoom]);
+
+  const handleOpenDetails = (id) => {
+    setSelectedId(id);
+    setDetailsOpen(true);
+  };
+
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setDetailsOpen(false);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, []);
+
   const handlePointerDown = (event) => {
-    if (event.button !== 0) return;
+    if (event.button !== 0 || !panMode) return;
     panRef.current = {
       x: event.clientX,
       y: event.clientY,
       scrollLeft: event.currentTarget.scrollLeft,
       scrollTop: event.currentTarget.scrollTop,
+      offsetX: canvasOffset.x,
+      offsetY: canvasOffset.y,
     };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -243,8 +343,19 @@ const DrawingBoard = ({ phone }) => {
     const viewport = viewportRef.current;
     const pan = panRef.current;
     if (!viewport || !pan) return;
-    viewport.scrollLeft = pan.scrollLeft - (event.clientX - pan.x);
-    viewport.scrollTop = pan.scrollTop - (event.clientY - pan.y);
+    const deltaX = event.clientX - pan.x;
+    const deltaY = event.clientY - pan.y;
+    const canScrollX = viewport.scrollWidth > viewport.clientWidth;
+    const canScrollY = viewport.scrollHeight > viewport.clientHeight;
+
+    if (canScrollX) viewport.scrollLeft = pan.scrollLeft - deltaX;
+    if (canScrollY) viewport.scrollTop = pan.scrollTop - deltaY;
+    if (!canScrollX || !canScrollY) {
+      setCanvasOffset({
+        x: canScrollX ? pan.offsetX : pan.offsetX + deltaX,
+        y: canScrollY ? pan.offsetY : pan.offsetY + deltaY,
+      });
+    }
   };
 
   const stopPanning = (event) => {
@@ -257,7 +368,7 @@ const DrawingBoard = ({ phone }) => {
   const handleExport = () => {
     if (!tree || !phone) return;
 
-    const profileKey = `family-profile-${phone}`;
+    const profileKey = `${PROFILE_PREFIX}${phone}`;
     const profileValue = localStorage.getItem(profileKey);
     let profile = {};
     try {
@@ -266,13 +377,12 @@ const DrawingBoard = ({ phone }) => {
       setStatus('Export failed: saved profile data is invalid');
       return;
     }
-    const exportDate = new Date().toISOString();
-    const exportData = {
+    const exportData = createArchive({
+      fullName: profile.fullName,
       familyName: profile.familyName || tree.name,
       phone,
-      exportedAt: exportDate,
       tree,
-    };
+    });
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -283,13 +393,41 @@ const DrawingBoard = ({ phone }) => {
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 0);
 
-    const historyKey = `family-export-${Date.now()}`;
+    const historyKey = `${EXPORT_PREFIX}${Date.now()}`;
     localStorage.setItem(historyKey, JSON.stringify({
       familyName: exportData.familyName,
-      exportedAt: exportDate,
+      exportedAt: exportData.exportedAt,
       phone,
     }));
     setStatus('JSON archive downloaded');
+  };
+
+  const handleImport = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        if (imported.format && imported.format !== 'familyroots-tree') throw new Error('Invalid format');
+        if (!imported.familyName || !isValidTree(imported.tree)) throw new Error('Invalid archive');
+
+        const importedPhone = getUniqueProfileId(imported.phone || `imported-${Date.now()}`);
+        localStorage.setItem(`${PROFILE_PREFIX}${importedPhone}`, JSON.stringify({
+          fullName: imported.fullName || '',
+          phoneNumber: importedPhone,
+          familyName: imported.familyName,
+          tree: imported.tree,
+        }));
+        setStatus('JSON archive imported');
+        navigate(`/builder/${importedPhone}`);
+      } catch {
+        setStatus('Import failed: choose a valid FamilyRoots JSON archive');
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
   };
 
   return (
@@ -300,6 +438,8 @@ const DrawingBoard = ({ phone }) => {
           <BoardHint>{status}</BoardHint>
         </div>
         <BoardTools>
+          <ExportButton type="button" onClick={() => importInputRef.current?.click()}><FiUpload aria-hidden="true" /> Import JSON</ExportButton>
+          <HiddenInput ref={importInputRef} type="file" accept="application/json,.json" onChange={handleImport} />
           <ExportButton type="button" onClick={handleExport} disabled={!tree}><FiDownload aria-hidden="true" /> Export JSON</ExportButton>
           <ZoomControls aria-label="Tree zoom controls">
             <ZoomButton type="button" onClick={() => updateZoom(zoom - 0.1)} aria-label="Zoom out" title="Zoom out"><FiMinus /></ZoomButton>
@@ -307,15 +447,29 @@ const DrawingBoard = ({ phone }) => {
             <ZoomButton type="button" onClick={() => updateZoom(zoom + 0.1)} aria-label="Zoom in" title="Zoom in"><FiPlus /></ZoomButton>
             <FitButton type="button" onClick={handleFitTree} aria-label="Fit tree to viewport" title="Fit tree"><FiMaximize /> Fit</FitButton>
             <ZoomButton type="button" onClick={centerSelected} aria-label="Center selected person" title="Center selected person"><FiCrosshair /></ZoomButton>
+            <ModeButton type="button" $active={panMode} onClick={() => setPanMode((currentMode) => !currentMode)} aria-pressed={panMode} title={panMode ? 'Switch to focus mode' : 'Switch to pan mode'}>
+              {panMode ? <FiTarget aria-hidden="true" /> : <FiMove aria-hidden="true" />}
+              {panMode ? 'Pan' : 'Focus'}
+            </ModeButton>
           </ZoomControls>
           <span>{tree ? 'Live archive' : 'Preparing archive'}</span>
         </BoardTools>
       </BoardHeader>
-      {tree && (
+      {profileMissing ? (
+        <EmptyState>
+          <strong>Family archive not found</strong>
+          <span>This builder link does not match a saved family on this device.</span>
+          <Link to="/families">Return to your families</Link>
+        </EmptyState>
+      ) : tree && (
         <>
           <MemberAddForm onAdd={handleAdd} selectedId={selectedId} />
-          {findNode(tree, selectedId) && (
-            <MoreDetailsForm member={findNode(tree, selectedId)} onUpdate={handleUpdate} onDelete={handleDelete} />
+          {detailsOpen && findNode(tree, selectedId) && (
+            <DetailsOverlay onClick={() => setDetailsOpen(false)} role="presentation">
+              <div onClick={(event) => event.stopPropagation()}>
+                <MoreDetailsForm member={findNode(tree, selectedId)} onUpdate={handleUpdate} onDelete={handleDelete} onClose={() => setDetailsOpen(false)} />
+              </div>
+            </DetailsOverlay>
           )}
           {tree.unlinkedPeople?.length > 0 && (
             <UnlinkedSection>
@@ -326,8 +480,11 @@ const DrawingBoard = ({ phone }) => {
               </UnlinkedList>
             </UnlinkedSection>
           )}
+          <CanvasHint>{panMode ? 'Pan mode: drag the canvas to explore' : 'Focus mode: select a person to center them'} · double-click for details · + / − to zoom · 0 to fit</CanvasHint>
           <TreeViewport
             ref={viewportRef}
+            $panMode={panMode}
+            data-pan-mode={panMode}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={stopPanning}
@@ -335,8 +492,8 @@ const DrawingBoard = ({ phone }) => {
             title="Drag to pan. Hold Ctrl or Cmd and scroll to zoom"
           >
             <TreeStage $width={canvasSize.width ? canvasSize.width * zoom : undefined} $height={canvasSize.height ? canvasSize.height * zoom : undefined}>
-              <TreeCanvas ref={canvasRef} $zoom={zoom}>
-                <FamilyMember node={tree} isRoot onSelect={handleSelect} selectedId={selectedId} />
+                <TreeCanvas ref={canvasRef} $zoom={zoom} $offsetX={canvasOffset.x} $offsetY={canvasOffset.y}>
+                <FamilyMember node={tree} isRoot onSelect={handleSelect} onOpenDetails={handleOpenDetails} selectedId={selectedId} />
               </TreeCanvas>
             </TreeStage>
           </TreeViewport>

@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 export const FormWrapper = styled.div`
-  width: auto;
+  position: relative;
+  width: min(680px, 100%);
   padding: 1rem 1.25rem;
   margin: 1.25rem 1.25rem 0;
   background: #fff;
@@ -35,6 +36,7 @@ export const FormWrapper = styled.div`
 `;
 
 export const FormHeader = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -51,6 +53,24 @@ export const FormHeader = styled.div`
     color: #7b8c80;
     font-size: 0.72rem;
   }
+`;
+
+export const CloseButton = styled.button`
+  position: absolute;
+  top: -0.2rem;
+  right: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  color: #52615b;
+  background: #f6f4ef;
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+
+  &:hover { color: #bd5b3c; }
+  &:focus-visible { outline: 2px solid #bd5b3c; outline-offset: 2px; }
 `;
 
 export const Label = styled.label`

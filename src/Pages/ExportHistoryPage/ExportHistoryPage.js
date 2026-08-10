@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { EXPORT_PREFIX } from '../../utils/familyData';
 
 const ExportHistoryPage = () => {
   const [exports] = useState(() => Object.keys(localStorage)
-    .filter((key) => key.startsWith('family-export-'))
-    .map((key) => JSON.parse(localStorage.getItem(key)))
+    .filter((key) => key.startsWith(EXPORT_PREFIX))
+    .map((key) => {
+      try {
+        return JSON.parse(localStorage.getItem(key));
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
     .sort((first, second) => new Date(second.exportedAt) - new Date(first.exportedAt)));
 
   return (

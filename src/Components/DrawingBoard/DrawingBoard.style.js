@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { FormWrapper } from '../MoreDetailsForm/MoreDetailsForm.style';
 
 export const BoardWrapper = styled.div`
   width: 100%;
@@ -97,6 +98,10 @@ export const ExportButton = styled.button`
   }
 `;
 
+export const HiddenInput = styled.input`
+  display: none;
+`;
+
 export const ZoomLabel = styled.span`
   color: #24312d;
   font-size: 0.68rem;
@@ -157,6 +162,31 @@ export const FitButton = styled.button`
   }
 `;
 
+export const ModeButton = styled.button`
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.65rem;
+  color: ${({ $active }) => ($active ? '#fff' : '#52685a')};
+  background: ${({ $active }) => ($active ? '#647b6b' : '#e3e9df')};
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  &:hover {
+    color: #fff;
+    background: #52685a;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #bd5b3c;
+    outline-offset: 2px;
+  }
+`;
+
 export const BoardTitle = styled.h2`
   margin: 0 0 0.25rem;
   color: #24312d;
@@ -179,6 +209,60 @@ export const BoardHint = styled.p`
   }
 `;
 
+export const CanvasHint = styled.p`
+  margin: 0.7rem 1.25rem 0;
+  color: #7b8c80;
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  text-align: right;
+
+  @media (max-width: 560px) {
+    text-align: left;
+  }
+`;
+
+export const EmptyState = styled.div`
+  display: grid;
+  gap: 0.75rem;
+  min-height: 240px;
+  place-content: center;
+  padding: 2rem;
+  color: #68776d;
+  background: #f4f1e9;
+  text-align: center;
+
+  strong {
+    color: #24312d;
+    font-family: Georgia, serif;
+    font-size: 1.45rem;
+    font-weight: 400;
+  }
+
+  a {
+    color: #bd5b3c;
+    font-weight: 700;
+    text-decoration: none;
+  }
+`;
+
+export const DetailsOverlay = styled.div`
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(36, 49, 45, 0.42);
+  backdrop-filter: blur(4px);
+
+  ${FormWrapper} {
+    max-height: min(90vh, 760px);
+    overflow-y: auto;
+    margin: 0;
+    box-shadow: 0 24px 70px rgba(36, 49, 45, 0.24);
+  }
+`;
+
 export const TreeViewport = styled.div`
   width: 100%;
   max-width: 100%;
@@ -197,10 +281,15 @@ export const TreeViewport = styled.div`
   border: 1px solid rgba(36, 49, 45, 0.1);
   border-radius: 8px;
   scrollbar-color: #9ca99d #e8e4da;
-  cursor: grab;
+  scroll-behavior: smooth;
+  cursor: ${({ $panMode }) => ($panMode ? 'grab' : 'default')};
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 
   &:active {
+    cursor: ${({ $panMode }) => ($panMode ? 'grabbing' : 'default')};
+  }
+
+  &[data-pan-mode='true']:active {
     cursor: grabbing;
   }
 
@@ -239,7 +328,7 @@ export const TreeCanvas = styled.div`
   flex: 0 0 auto;
   width: max-content;
   margin: 0;
-  transform: scale(${({ $zoom }) => $zoom});
+  transform: translate(${({ $offsetX, $offsetY, $zoom }) => `${$offsetX / $zoom}px, ${$offsetY / $zoom}px`}) scale(${({ $zoom }) => $zoom});
   transform-origin: top left;
 `;
 
@@ -247,4 +336,5 @@ export const TreeStage = styled.div`
   flex: 0 0 auto;
   width: ${({ $width }) => $width ? `${$width}px` : 'max-content'};
   height: ${({ $height }) => $height ? `${$height}px` : 'auto'};
+  margin: 0 auto;
 `;

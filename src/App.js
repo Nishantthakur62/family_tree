@@ -5,6 +5,7 @@ import ExportHistoryPage from './Pages/ExportHistoryPage/ExportHistoryPage';
 import HomePage from './Pages/HomePage/HomePage';
 import Layout from './Components/Layout/Layout';
 import BuilderPage from './Pages/BuilderPage/BuilderPage';
+import ContactPage from './Pages/ContactPage/ContactPage';
 import './App.css'; 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/families" element={<FamiliesPage />} />
           <Route path="/export-history" element={<ExportHistoryPage />} />
           <Route path="/builder/:phone" element={<BuilderPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </Layout>

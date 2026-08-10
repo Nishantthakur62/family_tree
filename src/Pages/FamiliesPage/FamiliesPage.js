@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page, Eyebrow, Heading, Intro, Toolbar, ImportButton, HiddenInput, FamilyGrid, FamilyCard, CardTop, FamilyName, FamilyMeta, CardActions, ActionButton, EmptyState, RenameInput } from './FamiliesPage.style';
+import { getUniqueProfileId, isValidTree, PROFILE_PREFIX } from '../../utils/familyData';
 
 const FamiliesPage = () => {
   const fileInput = useRef(null);
@@ -35,10 +36,11 @@ const FamiliesPage = () => {
     reader.onload = () => {
       try {
         const imported = JSON.parse(reader.result);
-        if (!imported.familyName || !imported.tree) throw new Error('Invalid archive');
-        const phone = imported.phone || `imported-${Date.now()}`;
-        localStorage.setItem(`family-profile-${phone}`, JSON.stringify({
-          fullName: '',
+        if (imported.format && imported.format !== 'familyroots-tree') throw new Error('Invalid archive format');
+        if (!imported.familyName || !isValidTree(imported.tree)) throw new Error('Invalid archive');
+        const phone = getUniqueProfileId(imported.phone || `imported-${Date.now()}`);
+        localStorage.setItem(`${PROFILE_PREFIX}${phone}`, JSON.stringify({
+          fullName: imported.fullName || '',
           phoneNumber: phone,
           familyName: imported.familyName,
           tree: imported.tree,
@@ -92,11 +94,12 @@ const FamiliesPage = () => {
 };
 
 const loadProfiles = () => Object.keys(localStorage)
-  .filter((key) => key.startsWith('family-profile-'))
+  .filter((key) => key.startsWith(PROFILE_PREFIX))
   .map((key) => {
     try {
       const profile = JSON.parse(localStorage.getItem(key));
-      const phoneNumber = profile.phoneNumber || key.slice('family-profile-'.length);
+      if (!profile || typeof profile !== 'object') return null;
+      const phoneNumber = profile.phoneNumber || key.slice(PROFILE_PREFIX.length);
       return { key, ...profile, phoneNumber };
     } catch {
       return null;

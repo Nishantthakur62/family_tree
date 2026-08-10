@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ModalOverlay, ModalContainer, ModalHeader, ModalBody, Input, SubmitButton, CloseButton } from './IntroForm.style';
 import { useNavigate } from 'react-router-dom';
+import { PROFILE_PREFIX } from '../../utils/familyData';
 
 const IntroForm = ({ onClose }) => {
   const [fullName, setFullName] = useState('');
@@ -14,7 +15,7 @@ const IntroForm = ({ onClose }) => {
 
     const allKeys = Object.keys(localStorage);
     const phoneExists = allKeys.some((key) => {
-      if (key.startsWith('family-profile-')) {
+      if (key.startsWith(PROFILE_PREFIX)) {
         try {
           const data = JSON.parse(localStorage.getItem(key));
           return data.phoneNumber === phoneNumber;
@@ -36,7 +37,7 @@ const IntroForm = ({ onClose }) => {
       familyName,
     };
 
-    localStorage.setItem(`family-profile-${phoneNumber}`, JSON.stringify(formData));
+    localStorage.setItem(`${PROFILE_PREFIX}${phoneNumber}`, JSON.stringify(formData));
     navigate(`/builder/${phoneNumber}`);
   };
 

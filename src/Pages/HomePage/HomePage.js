@@ -12,6 +12,37 @@ import avatar7 from '../../Assets/Icons/avatar7.png';
 import avatar8 from '../../Assets/Icons/avatar8.png';
 import avatar9 from '../../Assets/Icons/avatar9.png';
 
+const darkNotes = {
+  'The Winden Family': 'A family archive inspired by the town where four generations are caught in a time knot.',
+  'Ines Kahnwald': 'Ines adopts Mikkel after he becomes stranded in 1986 and raises him as Michael Kahnwald.',
+  'Daniel Kahnwald': 'Daniel is Ines\' son and the father of Michael, linking the Kahnwald line to Mikkel Nielsen.',
+  'Michael Kahnwald': 'Michael is Mikkel Nielsen, the missing boy whose journey into the past changes the Kahnwald family.',
+  'Jonas Kahnwald': 'Jonas is Michael and Hannah\'s son, drawn into the search for the origin of Winden\'s cycles.',
+  'Agnes Nielsen': 'Agnes is Tronte\'s mother and Noah\'s sister, carrying the Nielsen line through Winden\'s tangled history.',
+  'Tronte Nielsen': 'Tronte is Agnes\' son and Ulrich\'s father, one of the links between the Nielsen and Kahnwald families.',
+  'Ulrich Nielsen': 'Ulrich investigates Mikkel\'s disappearance while trying to protect his children from Winden\'s secrets.',
+  'Martha Nielsen': 'Martha is Ulrich and Katharina\'s daughter, and her connection with Jonas crosses the family knot.',
+  'Magnus Nielsen': 'Magnus is Ulrich and Katharina\'s son and part of the group pulled toward the caves and the missing boys.',
+  'Noah Tauber': 'Noah, born Hanno Tauber, works to preserve the cycle while searching for his lost family across time.',
+  'Bernd Doppler': 'Bernd founded the Winden nuclear power plant, a place central to the town\'s hidden history.',
+  'Helge Doppler': 'Helge is Bernd\'s son and becomes involved in Noah\'s experiments and the disappearances around the caves.',
+  'Peter Doppler': 'Peter is Helge\'s son, Charlotte\'s husband, and the father of Franziska and Elisabeth.',
+  'Charlotte Doppler': 'Charlotte leads the Winden police investigation and discovers that her family history bends through time.',
+  'Franziska Doppler': 'Franziska is Charlotte and Peter\'s daughter and Magnus\'s partner during the later cycles.',
+  'Elisabeth Doppler': 'Elisabeth is Charlotte and Peter\'s younger daughter, whose future becomes part of the family paradox.',
+  'Greta Doppler': 'Greta is Helge\'s mother and Bernd\'s wife, living with the aftermath of Helge\'s disappearance.',
+  'Bernd Tiedemann': 'Bernd is Claudia\'s father and the first director of the Winden nuclear power plant.',
+  'Claudia Tiedemann': 'Claudia becomes the White Devil to her enemies and spends decades trying to break the knot.',
+  'Regina Tiedemann': 'Regina is Claudia\'s daughter and the owner of the hotel, facing the consequences of Winden\'s cycles.',
+  'Egon Tiedemann': 'Egon is a Winden police officer whose investigations bring him close to the town\'s impossible events.',
+  'Aleksander Tiedemann': 'Aleksander, originally Boris Niewald, becomes Regina\'s husband and director of the power plant.',
+  'Bartosz Tiedemann': 'Bartosz is Regina and Aleksander\'s son and is recruited by Noah into the secret society Sic Mundus.',
+  'Agnes Kahnwald': 'Agnes Kahnwald is used here as Michael\'s spouse in the demo branch, echoing the show\'s interconnected identities.',
+  'Hannah Kahnwald': 'Hannah is Michael\'s wife and Jonas\'s mother, whose choices continue to reshape the family knot.',
+  'Jana Nielsen': 'Jana is Tronte\'s wife and Ulrich\'s mother, still haunted by Mads\' disappearance.',
+  'Katharina Nielsen': 'Katharina is Ulrich\'s wife and the mother of Magnus, Martha, and Mikkel.',
+};
+
 const demoNode = (id, name, children = [], extra = {}) => ({
   id,
   name,
@@ -22,7 +53,7 @@ const demoNode = (id, name, children = [], extra = {}) => ({
   alias: '',
   occupation: 'Family historian',
   location: 'Cedar Falls',
-  notes: `${name} is part of this family story.`,
+  notes: darkNotes[name] || `${name} is part of this family story.`,
   image: avatar1,
   ...extra,
 });

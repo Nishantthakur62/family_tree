@@ -13,21 +13,22 @@ import {
 
 import { FaFacebookF, FaInstagram, FaTwitter, FaGlobe } from 'react-icons/fa';
 import logo from '../../../src/Assets/Logo/WebsiteLogo.png'; // Adjust the path as necessary
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
     <FooterContainer>
       <FooterTop>
         <div>
-          <LogoImage src={logo} alt="FamilyTree Logo" style={{ transform: "scale(0.5)" }} />
+          <LogoImage src={logo} alt="FamilyTree Logo" />
           <Tagline>Preserving your legacy, one branch at a time.</Tagline>
         </div>
         <LinkSection>
           <LinkGroup>
-            <LinkItem href="/">Home</LinkItem>
-            <LinkItem href="/families">Families</LinkItem>
-            <LinkItem href="/export-history">Export</LinkItem>
-            <LinkItem href="/contact">Contact</LinkItem>
+            <LinkItem as={Link} to="/">Home</LinkItem>
+            <LinkItem as={Link} to="/families">Families</LinkItem>
+            <LinkItem as={Link} to="/export-history">Export</LinkItem>
+            <LinkItem as={Link} to="/contact">Contact</LinkItem>
           </LinkGroup>
         </LinkSection>
         <LinkGroup>

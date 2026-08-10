@@ -1,18 +1,19 @@
 import styled from 'styled-components';
 
 export const NodeContainer = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: max-content;
-  min-width: 190px;
+  min-width: 204px;
 `;
 
 export const GenerationRow = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: 2rem;
+  gap: 2.75rem;
   width: max-content;
   padding: 0 1rem;
 `;
@@ -28,40 +29,50 @@ export const PartnerRow = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.7rem;
 
   &::after {
     content: '';
     position: absolute;
     left: 50%;
-    bottom: -1.5rem;
-    width: 1px;
-    height: 1.5rem;
-    background: rgba(100, 123, 107, 0.45);
+    bottom: -1.75rem;
+    width: 2px;
+    height: 1.75rem;
+    background: linear-gradient(#bd5b3c, #9eafa1);
+    border-radius: 999px;
   }
 
   .partnerLink {
+    width: 1.35rem;
+    height: 1.35rem;
+    display: grid;
+    place-items: center;
     color: #bd5b3c;
+    background: #fff1e5;
+    border: 1px solid rgba(189, 91, 60, 0.3);
+    border-radius: 50%;
     font-family: Georgia, serif;
     font-size: 1rem;
     font-weight: 700;
   }
 `;
 
-export const NodeBox = styled.div`
+export const NodeBox = styled.button`
   position: relative;
   z-index: 1;
-  width: 175px;
-  min-height: 76px;
-  padding: 0.8rem;
+  width: ${({ $root }) => $root ? '196px' : '184px'};
+  min-height: ${({ $root }) => $root ? '84px' : '78px'};
+  padding: 0.85rem;
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  background: ${({ selected }) => selected ? '#fff7df' : '#fff'};
-  border: 1px solid ${({ selected }) => selected ? '#bd5b3c' : 'rgba(36, 49, 45, 0.15)'};
+  background: ${({ selected, $root }) => selected ? '#fff7df' : ($root ? '#edf3e9' : '#fff')};
+  border: 1px solid ${({ selected, $root }) => selected ? '#bd5b3c' : ($root ? '#93a992' : 'rgba(36, 49, 45, 0.15)')};
   border-radius: 8px;
-  box-shadow: ${({ selected }) => selected ? '0 8px 20px rgba(189, 91, 60, 0.18)' : '0 6px 16px rgba(36, 49, 45, 0.1)'};
+  box-shadow: ${({ selected, $root }) => selected ? '0 10px 24px rgba(189, 91, 60, 0.2)' : ($root ? '0 8px 18px rgba(100, 123, 107, 0.16)' : '0 5px 14px rgba(36, 49, 45, 0.1)')};
   cursor: pointer;
+  font: inherit;
+  text-align: left;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   .nodeMark {
@@ -71,10 +82,18 @@ export const NodeBox = styled.div`
     display: grid;
     place-items: center;
     color: #fff;
-    background: ${({ selected }) => selected ? '#bd5b3c' : '#647b6b'};
+    background: ${({ selected, $root }) => selected ? '#bd5b3c' : ($root ? '#52685a' : '#647b6b')};
     border-radius: 50%;
     font-family: Georgia, serif;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+  }
+
+  .nodeImage {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    object-fit: cover;
+    border-radius: 50%;
   }
 
   .nodeInfo {
@@ -87,7 +106,7 @@ export const NodeBox = styled.div`
   strong {
     overflow: hidden;
     color: #24312d;
-    font-size: 0.85rem;
+    font-size: ${({ $root }) => $root ? '0.9rem' : '0.85rem'};
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -98,37 +117,75 @@ export const NodeBox = styled.div`
   }
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 22px rgba(36, 49, 45, 0.16);
+    transform: translateY(-4px);
+    border-color: #bd5b3c;
+    box-shadow: 0 12px 24px rgba(36, 49, 45, 0.16);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(189, 91, 60, 0.32);
+    outline-offset: 3px;
   }
 `;
 
 export const ChildrenWrapper = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 2rem;
   position: relative;
-  margin-top: 1.5rem;
-  padding: 1.5rem 0.5rem 0;
-  border-top: 1px solid rgba(100, 123, 107, 0.5);
+  margin-top: 1.75rem;
+  padding: 1.75rem 0.75rem 0;
+  border-top: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1.25rem;
+    right: 1.25rem;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #9eafa1 10%, #bd5b3c 50%, #9eafa1 90%, transparent);
+    border-radius: 999px;
+    box-shadow: 0 0 8px rgba(189, 91, 60, 0.12);
+  }
+
+  &:has(> ${NodeContainer}:only-child)::after {
+    display: none;
+  }
 
   &::before {
     content: '';
     position: absolute;
-    top: -1.5rem;
+    top: -1.75rem;
     left: 50%;
-    width: 1px;
-    height: 1.5rem;
-    background: rgba(100, 123, 107, 0.45);
+    width: 2px;
+    height: 1.75rem;
+    background: #9eafa1;
+    border-radius: 999px;
   }
 
   > ${NodeContainer}::before {
     content: '';
     position: absolute;
-    top: -1.5rem;
+    top: -1.75rem;
     left: 50%;
-    width: 1px;
-    height: 1.5rem;
-    background: rgba(100, 123, 107, 0.45);
+    width: 2px;
+    height: 1.75rem;
+    background: #9eafa1;
+    border-radius: 999px;
+  }
+
+  > ${NodeContainer}::after {
+    content: '';
+    position: absolute;
+    top: -1.86rem;
+    left: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    background: #bd5b3c;
+    border: 2px solid #f4f1e9;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 1px rgba(189, 91, 60, 0.25);
   }
 `;

@@ -15,8 +15,12 @@ const IntroForm = ({ onClose }) => {
     const allKeys = Object.keys(localStorage);
     const phoneExists = allKeys.some((key) => {
       if (key.startsWith('family-profile-')) {
-        const data = JSON.parse(localStorage.getItem(key));
-        return data.phoneNumber === phoneNumber;
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          return data.phoneNumber === phoneNumber;
+        } catch {
+          return false;
+        }
       }
       return false;
     });

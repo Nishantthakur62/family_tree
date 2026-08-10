@@ -93,7 +93,16 @@ const FamiliesPage = () => {
 
 const loadProfiles = () => Object.keys(localStorage)
   .filter((key) => key.startsWith('family-profile-'))
-  .map((key) => ({ key, ...JSON.parse(localStorage.getItem(key)) }));
+  .map((key) => {
+    try {
+      const profile = JSON.parse(localStorage.getItem(key));
+      const phoneNumber = profile.phoneNumber || key.slice('family-profile-'.length);
+      return { key, ...profile, phoneNumber };
+    } catch {
+      return null;
+    }
+  })
+  .filter(Boolean);
 
 const countMembers = (node) => {
   if (!node) return 0;

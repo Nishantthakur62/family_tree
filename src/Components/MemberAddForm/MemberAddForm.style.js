@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
 export const AddForm = styled.form`
-	width: min(100%, 720px);
+	width: auto;
 	display: grid;
 	grid-template-columns: minmax(0, 1.4fr) minmax(140px, 0.8fr) auto;
 	align-items: end;
 	gap: 0.8rem;
-	padding: 1rem;
-	margin-bottom: 2rem;
+	padding: 0.85rem 1.25rem;
+	margin: 1.25rem 1.25rem 0;
 	background: #fff;
 	border: 1px solid rgba(36, 49, 45, 0.12);
 	border-radius: 8px;
-	box-shadow: 0 10px 28px rgba(36, 49, 45, 0.06);
+	box-shadow: none;
 
 	@media (max-width: 620px) {
 		grid-template-columns: 1fr;

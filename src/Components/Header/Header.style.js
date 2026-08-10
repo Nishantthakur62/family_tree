@@ -29,6 +29,12 @@ export const LogoImage = styled.img`
   }
 `;
 
+export const LogoLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+`;
+
 export const Nav = styled.nav`
   display: flex;
   gap: 0.35rem;
@@ -38,7 +44,7 @@ export const Nav = styled.nav`
   }
 `;
 
-export const NavItem = styled.div`
+export const NavItem = styled.a`
   color: ${({ $active }) => ($active ? '#bd5b3c' : '#52615b')};
   font-weight: 700;
   text-decoration: none;
@@ -55,6 +61,23 @@ export const NavItem = styled.div`
   }
 `;
 
+export const NavCta = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.9rem;
+  color: #fff;
+  background: #bd5b3c;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    background: #a4492f;
+  }
+`;
+
 export const Hamburger = styled.button`
   display: none;
   font-size: 1.5rem;
@@ -63,6 +86,7 @@ export const Hamburger = styled.button`
   border: 0;
   padding: 0.25rem;
   cursor: pointer;
+  line-height: 1;
   z-index: 1001;
 
   @media (max-width: 768px) {
@@ -89,7 +113,7 @@ export const MobileMenu = styled.div`
     text-decoration: none;
 
     &:hover {
-      color: #ffffff;
+      color: #bd5b3c;
     }
   }
 `;

@@ -73,7 +73,9 @@ const createDarkDemoTree = () => {
   const root = demoNode('dark-root', 'The Winden Family', [
     demoNode('dark-ines', 'Ines Kahnwald', [
       demoNode('dark-daniel', 'Daniel Kahnwald', [
-        demoNode('dark-michael', 'Michael Kahnwald', [], { dob: '1986', relation: 'Grandchild', occupation: 'Painter', location: 'Winden', image: avatar4, notes: 'A quiet life shaped by memories that never stay in the past.' }),
+        demoNode('dark-michael', 'Michael Kahnwald', [
+          demoNode('dark-jonas', 'Jonas Kahnwald', [], { dob: '2003', relation: 'Great-grandchild', alias: 'The traveller', occupation: 'Student', location: 'Winden', image: avatar4 }),
+        ], { dob: '1986', relation: 'Grandchild', alias: 'Mikkel Nielsen', occupation: 'Painter', location: 'Winden', image: avatar4, notes: 'A quiet life shaped by memories that never stay in the past.' }),
       ], { dob: '1953', relation: 'Child', occupation: 'Police officer', location: 'Winden', image: avatar2 }),
     ], { dob: '1930', relation: 'Daughter', occupation: 'Nurse', location: 'Winden', image: avatar3, notes: 'The family archive begins with a box of photographs from the caves.' }),
     demoNode('dark-agnes', 'Agnes Nielsen', [
@@ -83,17 +85,33 @@ const createDarkDemoTree = () => {
           demoNode('dark-magnus', 'Magnus Nielsen', [], { dob: '2000', relation: 'Great-grandchild', occupation: 'Student', location: 'Winden', image: avatar8 }),
         ], { dob: '1971', relation: 'Grandchild', occupation: 'Police officer', location: 'Winden', image: avatar5 }),
       ], { dob: '1941', relation: 'Child', occupation: 'Journalist', location: 'Winden', image: avatar6 }),
+      demoNode('dark-noah', 'Noah Tauber', [], { dob: '1904', relation: 'Son', alias: 'Hanno Tauber', occupation: 'Priest', location: 'Winden', image: avatar9, notes: 'A mysterious priest whose place in the family becomes clear only across time.' }),
     ], { dob: '1915', relation: 'Daughter', occupation: 'Seamstress', location: 'Winden', image: avatar9, notes: 'Some branches of the family seem to return to the same place.' }),
     demoNode('dark-bernd', 'Bernd Doppler', [
       demoNode('dark-helge', 'Helge Doppler', [
         demoNode('dark-peter', 'Peter Doppler', [], { dob: '1970', relation: 'Grandchild', occupation: 'Therapist', location: 'Winden', image: avatar4 }),
       ], { dob: '1944', relation: 'Child', occupation: 'Plant director', location: 'Winden', image: avatar2 }),
     ], { dob: '1918', relation: 'Son', occupation: 'Engineer', location: 'Winden', image: avatar1, notes: 'The family records are full of dates, diagrams, and unanswered questions.' }),
+    demoNode('dark-tiedemann', 'Bernd Tiedemann', [
+      demoNode('dark-claudia', 'Claudia Tiedemann', [
+        demoNode('dark-regina', 'Regina Tiedemann', [], { dob: '1962', relation: 'Grandchild', occupation: 'Hotel owner', location: 'Winden', image: avatar6 }),
+      ], { dob: '1942', relation: 'Child', alias: 'The White Devil', occupation: 'Scientist', location: 'Winden', image: avatar6, notes: 'She studies the knot connecting every family in Winden.' }),
+    ], { dob: '1913', relation: 'Son', occupation: 'Power plant director', location: 'Winden', image: avatar2, notes: 'The Tiedemann line is at the center of Winden power and secrets.' }),
   ], { dob: '1890', relation: 'Family root', occupation: 'Clockmaker', location: 'Winden', image: avatar1, notes: 'A demo family inspired by the mysterious interconnected families of Winden.' });
-  root.spouse = demoNode('dark-root-spouse', 'Claudia Tiedemann', [], { dob: '1942', relation: 'Spouse', occupation: 'Scientist', location: 'Winden', image: avatar6, notes: 'Every ending is also a beginning.' });
+  root.spouse = demoNode('dark-root-spouse', 'Egon Tiedemann', [], { dob: '1936', relation: 'Spouse', occupation: 'Police officer', location: 'Winden', image: avatar3 });
   root.children[0].spouse = demoNode('dark-daniel-spouse', 'Agnes Kahnwald', [], { dob: '1955', relation: 'Spouse', occupation: 'Archivist', location: 'Winden', image: avatar5 });
-  root.children[1].spouse = demoNode('dark-tronte-spouse', 'Jana Nielsen', [], { dob: '1944', relation: 'Spouse', occupation: 'Teacher', location: 'Winden', image: avatar3 });
-  root.children[2].spouse = demoNode('dark-helge-spouse', 'Greta Doppler', [], { dob: '1946', relation: 'Spouse', occupation: 'Homemaker', location: 'Winden', image: avatar8 });
+  root.children[0].children[0].children[0].spouse = demoNode('dark-hannah', 'Hannah Kahnwald', [], { dob: '1972', relation: 'Spouse', occupation: 'Massage therapist', location: 'Winden', image: avatar5 });
+  root.children[1].children[0].spouse = demoNode('dark-tronte-spouse', 'Jana Nielsen', [], { dob: '1944', relation: 'Spouse', occupation: 'Teacher', location: 'Winden', image: avatar3 });
+  root.children[1].children[0].children[0].spouse = demoNode('dark-katharina', 'Katharina Nielsen', [], { dob: '1971', relation: 'Spouse', occupation: 'School principal', location: 'Winden', image: avatar8 });
+  root.children[2].children[0].spouse = demoNode('dark-helge-spouse', 'Greta Doppler', [], { dob: '1946', relation: 'Spouse', occupation: 'Homemaker', location: 'Winden', image: avatar8 });
+  root.children[2].children[0].children[0].children = [
+    demoNode('dark-charlotte', 'Charlotte Doppler', [
+      demoNode('dark-franziska', 'Franziska Doppler', [], { dob: '2000', relation: 'Great-grandchild', occupation: 'Student', location: 'Winden', image: avatar7 }),
+      demoNode('dark-elisabeth', 'Elisabeth Doppler', [], { dob: '2003', relation: 'Great-grandchild', occupation: 'Student', location: 'Winden', image: avatar9 }),
+    ], { dob: '1971', relation: 'Great-grandchild', occupation: 'Police chief', location: 'Winden', image: avatar3 }),
+  ];
+  root.children[3].children[0].children[0].spouse = demoNode('dark-aleksander', 'Aleksander Tiedemann', [], { dob: '1967', relation: 'Spouse', alias: 'Boris Niewald', occupation: 'Power plant director', location: 'Winden', image: avatar5 });
+  root.children[3].children[0].children[0].children.push(demoNode('dark-bartosz', 'Bartosz Tiedemann', [], { dob: '2001', relation: 'Great-grandchild', occupation: 'Student', location: 'Winden', image: avatar8 }));
   return root;
 };
 
@@ -115,12 +133,12 @@ const HomePage = () => {
     } catch {
       demoVersion = 0;
     }
-    if (demoVersion < 2) {
+    if (demoVersion < 3) {
       localStorage.setItem(demoKey, JSON.stringify({
         fullName: 'Demo Family',
         phoneNumber: demoPhone,
         familyName,
-        demoVersion: 2,
+        demoVersion: 3,
         tree: tree(),
       }));
     }

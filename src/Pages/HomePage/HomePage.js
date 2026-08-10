@@ -69,6 +69,34 @@ const createDemoTree = () => {
   return root;
 };
 
+const createDarkDemoTree = () => {
+  const root = demoNode('dark-root', 'The Winden Family', [
+    demoNode('dark-ines', 'Ines Kahnwald', [
+      demoNode('dark-daniel', 'Daniel Kahnwald', [
+        demoNode('dark-michael', 'Michael Kahnwald', [], { dob: '1986', relation: 'Grandchild', occupation: 'Painter', location: 'Winden', image: avatar4, notes: 'A quiet life shaped by memories that never stay in the past.' }),
+      ], { dob: '1953', relation: 'Child', occupation: 'Police officer', location: 'Winden', image: avatar2 }),
+    ], { dob: '1930', relation: 'Daughter', occupation: 'Nurse', location: 'Winden', image: avatar3, notes: 'The family archive begins with a box of photographs from the caves.' }),
+    demoNode('dark-agnes', 'Agnes Nielsen', [
+      demoNode('dark-tronte', 'Tronte Nielsen', [
+        demoNode('dark-ulrich', 'Ulrich Nielsen', [
+          demoNode('dark-martha', 'Martha Nielsen', [], { dob: '2003', relation: 'Great-grandchild', occupation: 'Student', location: 'Winden', image: avatar7 }),
+          demoNode('dark-magnus', 'Magnus Nielsen', [], { dob: '2000', relation: 'Great-grandchild', occupation: 'Student', location: 'Winden', image: avatar8 }),
+        ], { dob: '1971', relation: 'Grandchild', occupation: 'Police officer', location: 'Winden', image: avatar5 }),
+      ], { dob: '1941', relation: 'Child', occupation: 'Journalist', location: 'Winden', image: avatar6 }),
+    ], { dob: '1915', relation: 'Daughter', occupation: 'Seamstress', location: 'Winden', image: avatar9, notes: 'Some branches of the family seem to return to the same place.' }),
+    demoNode('dark-bernd', 'Bernd Doppler', [
+      demoNode('dark-helge', 'Helge Doppler', [
+        demoNode('dark-peter', 'Peter Doppler', [], { dob: '1970', relation: 'Grandchild', occupation: 'Therapist', location: 'Winden', image: avatar4 }),
+      ], { dob: '1944', relation: 'Child', occupation: 'Plant director', location: 'Winden', image: avatar2 }),
+    ], { dob: '1918', relation: 'Son', occupation: 'Engineer', location: 'Winden', image: avatar1, notes: 'The family records are full of dates, diagrams, and unanswered questions.' }),
+  ], { dob: '1890', relation: 'Family root', occupation: 'Clockmaker', location: 'Winden', image: avatar1, notes: 'A demo family inspired by the mysterious interconnected families of Winden.' });
+  root.spouse = demoNode('dark-root-spouse', 'Claudia Tiedemann', [], { dob: '1942', relation: 'Spouse', occupation: 'Scientist', location: 'Winden', image: avatar6, notes: 'Every ending is also a beginning.' });
+  root.children[0].spouse = demoNode('dark-daniel-spouse', 'Agnes Kahnwald', [], { dob: '1955', relation: 'Spouse', occupation: 'Archivist', location: 'Winden', image: avatar5 });
+  root.children[1].spouse = demoNode('dark-tronte-spouse', 'Jana Nielsen', [], { dob: '1944', relation: 'Spouse', occupation: 'Teacher', location: 'Winden', image: avatar3 });
+  root.children[2].spouse = demoNode('dark-helge-spouse', 'Greta Doppler', [], { dob: '1946', relation: 'Spouse', occupation: 'Homemaker', location: 'Winden', image: avatar8 });
+  return root;
+};
+
 const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchParams] = useSearchParams();
@@ -78,8 +106,7 @@ const HomePage = () => {
     if (searchParams.get('start') === '1') setIsModalOpen(true);
   }, [searchParams]);
 
-  const openDemo = () => {
-    const demoPhone = 'demo-morgan-4gen';
+  const openDemo = (demoPhone, familyName, tree) => {
     const demoKey = `family-profile-${demoPhone}`;
     const existingDemo = localStorage.getItem(demoKey);
     let demoVersion = 0;
@@ -92,9 +119,9 @@ const HomePage = () => {
       localStorage.setItem(demoKey, JSON.stringify({
         fullName: 'Demo Family',
         phoneNumber: demoPhone,
-        familyName: 'Morgan Family Demo · Four Generations',
+        familyName,
         demoVersion: 2,
-        tree: createDemoTree(),
+        tree: tree(),
       }));
     }
     navigate(`/builder/${demoPhone}`);
@@ -110,7 +137,8 @@ const HomePage = () => {
           <Actions>
             <Button onClick={() => setIsModalOpen(true)}>Start your tree <span aria-hidden="true">→</span></Button>
             <SecondaryButton href="#story">See how it works</SecondaryButton>
-            <DemoButton type="button" onClick={openDemo}>Explore demo family</DemoButton>
+            <DemoButton type="button" onClick={() => openDemo('demo-morgan-4gen', 'Morgan Family Demo · Four Generations', createDemoTree)}>Explore Morgan demo</DemoButton>
+            <DemoButton type="button" onClick={() => openDemo('demo-winden-dark', 'Winden Family Demo · Dark', createDarkDemoTree)}>Explore Winden demo</DemoButton>
           </Actions>
         </Content>
         <StoryPanel id="story">

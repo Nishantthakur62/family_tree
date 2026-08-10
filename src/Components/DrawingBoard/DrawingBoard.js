@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FiDownload, FiMinus, FiPlus, FiMaximize, FiCrosshair } from 'react-icons/fi';
 import FamilyMember from '../FamilyMember/FamilyMember';
-import { BoardWrapper, BoardHeader, BoardTitle, BoardHint, BoardTools, TreeViewport, TreeStage, TreeCanvas, ExportButton, ZoomLabel, ZoomControls, ZoomButton, FitButton } from './DrawingBoard.style';
+import { BoardWrapper, BoardHeader, BoardTitle, BoardHint, BoardTools, TreeViewport, TreeStage, TreeCanvas, ExportButton, ZoomLabel, ZoomControls, ZoomButton, FitButton, UnlinkedSection, UnlinkedList } from './DrawingBoard.style';
 import { generateUUID } from '../../utils/uuid';
 import MemberAddForm from '../MemberAddForm/MemberAddForm';
 import MoreDetailsForm from '../MoreDetailsForm/MoreDetailsForm';
@@ -252,7 +252,13 @@ const DrawingBoard = ({ phone }) => {
 
     const profileKey = `family-profile-${phone}`;
     const profileValue = localStorage.getItem(profileKey);
-    const profile = profileValue ? JSON.parse(profileValue) : {};
+    let profile = {};
+    try {
+      profile = profileValue ? JSON.parse(profileValue) : {};
+    } catch {
+      setStatus('Export failed: saved profile data is invalid');
+      return;
+    }
     const exportDate = new Date().toISOString();
     const exportData = {
       familyName: profile.familyName || tree.name,
@@ -303,6 +309,15 @@ const DrawingBoard = ({ phone }) => {
           <MemberAddForm onAdd={handleAdd} selectedId={selectedId} />
           {findNode(tree, selectedId) && (
             <MoreDetailsForm member={findNode(tree, selectedId)} onUpdate={handleUpdate} onDelete={handleDelete} />
+          )}
+          {tree.unlinkedPeople?.length > 0 && (
+            <UnlinkedSection>
+              <strong>Unlinked records</strong>
+              <span>These people were included in the source records without a confirmed relationship.</span>
+              <UnlinkedList>
+                {tree.unlinkedPeople.map((person, index) => <li key={`${person.name}-${index}`}>{person.name}</li>)}
+              </UnlinkedList>
+            </UnlinkedSection>
           )}
           <TreeViewport
             ref={viewportRef}

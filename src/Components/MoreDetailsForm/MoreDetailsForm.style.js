@@ -21,6 +21,12 @@ export const FormWrapper = styled.div`
     gap: 0.8rem;
   }
 
+  .imageError {
+    margin-bottom: 0.5rem;
+    color: #a4492f;
+    font-size: 0.72rem;
+  }
+
   @media (max-width: 520px) {
     .detailGrid {
       grid-template-columns: 1fr;

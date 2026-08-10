@@ -31,12 +31,15 @@ const HomePage = () => {
 
   const openDemo = () => {
     const demoPhone = 'demo-morgan-3gen';
-    localStorage.setItem(`family-profile-${demoPhone}`, JSON.stringify({
-      fullName: 'Demo Family',
-      phoneNumber: demoPhone,
-      familyName: 'Morgan Family Demo',
-      tree: createDemoTree(),
-    }));
+    const demoKey = `family-profile-${demoPhone}`;
+    if (!localStorage.getItem(demoKey)) {
+      localStorage.setItem(demoKey, JSON.stringify({
+        fullName: 'Demo Family',
+        phoneNumber: demoPhone,
+        familyName: 'Morgan Family Demo',
+        tree: createDemoTree(),
+      }));
+    }
     navigate(`/builder/${demoPhone}`);
   };
 

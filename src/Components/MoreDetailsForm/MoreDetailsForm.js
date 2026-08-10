@@ -15,6 +15,7 @@ const MoreDetailsForm = ({ member, onUpdate, onDelete }) => {
     notes: member.notes || '',
     image: member.image || '',
   });
+  const [imageError, setImageError] = useState('');
 
   useEffect(() => {
     setFormData({
@@ -43,7 +44,13 @@ const MoreDetailsForm = ({ member, onUpdate, onDelete }) => {
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      setImageError('Image must be smaller than 2 MB.');
+      event.target.value = '';
+      return;
+    }
 
+    setImageError('');
     const reader = new FileReader();
     reader.onload = () => setFormData(prev => ({ ...prev, image: reader.result }));
     reader.readAsDataURL(file);
@@ -80,6 +87,7 @@ const MoreDetailsForm = ({ member, onUpdate, onDelete }) => {
         <Textarea id="detail-notes" name="notes" value={formData.notes} onChange={handleChange} rows="4" placeholder="Stories, memories, sources, or anything worth keeping..." />
         <Label htmlFor="detail-image">Portrait</Label>
         <FileInput id="detail-image" type="file" accept="image/*" onChange={handleImageChange} />
+        {imageError && <small className="imageError">{imageError}</small>}
         {formData.image && <ImagePreview src={formData.image} alt={`${formData.name} portrait preview`} />}
         <Actions>
           <Button type="submit">Save details</Button>

@@ -209,6 +209,32 @@ export const TreeViewport = styled.div`
   }
 `;
 
+export const UnlinkedSection = styled.aside`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 1.25rem 1.25rem 0;
+  padding: 0.9rem 1rem;
+  color: #52615b;
+  background: #f7f2e8;
+  border-left: 3px solid #bd5b3c;
+  border-radius: 4px;
+  font-size: 0.75rem;
+
+  strong {
+    color: #24312d;
+    font-size: 0.85rem;
+  }
+`;
+
+export const UnlinkedList = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+`;
+
 export const TreeCanvas = styled.div`
   flex: 0 0 auto;
   width: max-content;

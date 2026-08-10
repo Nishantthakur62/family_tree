@@ -31,12 +31,15 @@ const DrawingBoard = ({ phone }) => {
   const viewportRef = useRef(null);
   const canvasRef = useRef(null);
   const panRef = useRef(null);
+  const manualZoomRef = useRef(false);
 
   const updateZoom = (nextZoom) => {
+    manualZoomRef.current = true;
     setZoom(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number(nextZoom.toFixed(2)))));
   };
 
   const fitTree = useCallback(() => {
+    if (manualZoomRef.current) return;
     const viewport = viewportRef.current;
     const canvas = canvasRef.current;
     if (!viewport || !canvas) return;
@@ -46,6 +49,11 @@ const DrawingBoard = ({ phone }) => {
     const nextZoom = treeWidth > availableWidth ? availableWidth / treeWidth : 1;
     setZoom(currentZoom => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number(nextZoom.toFixed(2)))));
   }, []);
+
+  const handleFitTree = () => {
+    manualZoomRef.current = false;
+    fitTree();
+  };
 
   const persistTree = (updatedTree) => {
     if (!phone) return;
@@ -95,7 +103,6 @@ const DrawingBoard = ({ phone }) => {
 
     const observer = new ResizeObserver(fitTree);
     observer.observe(viewport);
-    observer.observe(canvas);
     setCanvasSize({ width: canvas.scrollWidth, height: canvas.scrollHeight });
     const handleWheel = (event) => {
       if (!event.ctrlKey && !event.metaKey) return;
@@ -298,7 +305,7 @@ const DrawingBoard = ({ phone }) => {
             <ZoomButton type="button" onClick={() => updateZoom(zoom - 0.1)} aria-label="Zoom out" title="Zoom out"><FiMinus /></ZoomButton>
             <ZoomLabel>{Math.round(zoom * 100)}%</ZoomLabel>
             <ZoomButton type="button" onClick={() => updateZoom(zoom + 0.1)} aria-label="Zoom in" title="Zoom in"><FiPlus /></ZoomButton>
-            <FitButton type="button" onClick={fitTree} aria-label="Fit tree to viewport" title="Fit tree"><FiMaximize /> Fit</FitButton>
+            <FitButton type="button" onClick={handleFitTree} aria-label="Fit tree to viewport" title="Fit tree"><FiMaximize /> Fit</FitButton>
             <ZoomButton type="button" onClick={centerSelected} aria-label="Center selected person" title="Center selected person"><FiCrosshair /></ZoomButton>
           </ZoomControls>
           <span>{tree ? 'Live archive' : 'Preparing archive'}</span>

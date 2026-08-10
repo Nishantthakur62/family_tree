@@ -78,7 +78,7 @@ const MoreDetailsForm = ({ member, onUpdate, onDelete }) => {
         <Label htmlFor="detail-relation">Family relationship</Label>
         <Input id="detail-relation" name="relation" value={formData.relation} onChange={handleChange} placeholder="Parent, cousin, aunt..." />
         <Label htmlFor="detail-alias">Also known as</Label>
-        <Input id="detail-alias" name="alias" value={formData.alias} onChange={handleChange} placeholder="Nickname or alternate name" />
+        <Input id="detail-alias" name="alias" value={formData.alias} onChange={handleChange} placeholder="Nickname or alternate name" aria-label="Also known as" />
         <Label htmlFor="detail-occupation">Occupation</Label>
         <Input id="detail-occupation" name="occupation" value={formData.occupation} onChange={handleChange} />
         <Label htmlFor="detail-location">Place</Label>

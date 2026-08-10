@@ -22,7 +22,7 @@ const demoNode = (id, name, children = [], extra = {}) => ({
   alias: '',
   occupation: 'Family historian',
   location: 'Cedar Falls',
-  notes: 'A treasured part of the Morgan family story.',
+  notes: '',
   image: avatar1,
   ...extra,
 });

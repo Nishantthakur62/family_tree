@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://nishantthakur62.github.io/family_tree/</loc>
+    <loc>https://siplab.space/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://nishantthakur62.github.io/family_tree/families</loc>
+    <loc>https://siplab.space/families</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nishantthakur62.github.io/family_tree/game</loc>
+    <loc>https://siplab.space/game</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nishantthakur62.github.io/family_tree/contact</loc>
+    <loc>https://siplab.space/contact</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>

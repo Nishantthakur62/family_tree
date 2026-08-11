@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://nishantthakur62.github.io/family_tree/sitemap.xml
+Sitemap: https://siplab.space/sitemap.xml

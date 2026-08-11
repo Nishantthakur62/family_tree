@@ -12,13 +12,10 @@ import {
   LinkItem,
   ContactCard,
   ContactLabel,
-  SocialIcons,
-  Icon,
   Copyright,
 } from './Footer.style';
 
-import { FaFacebookF, FaInstagram, FaTwitter, FaGlobe } from 'react-icons/fa';
-import logo from '../../../src/Assets/Logo/WebsiteLogo.png'; // Adjust the path as necessary
+import logo from '../../../src/Assets/Logo/WebsiteLogo.png';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -48,14 +45,8 @@ const Footer = () => {
           <LinkItem href="#">Terms & Conditions</LinkItem>
         </ContactCard>
       </FooterTop>
-      <SocialIcons>
-        <Icon><FaGlobe /></Icon>
-        <Icon><FaFacebookF /></Icon>
-        <Icon><FaTwitter /></Icon>
-        <Icon><FaInstagram /></Icon>
-      </SocialIcons>
       <Copyright>
-        © {new Date().getFullYear()} FamilyTree | Built with ❤️ by Nishant
+        © {new Date().getFullYear()} FamilyTree. A thoughtful home for the stories that shape us.
       </Copyright>
     </FooterContainer>
   );

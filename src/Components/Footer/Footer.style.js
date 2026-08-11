@@ -116,31 +116,6 @@ export const ContactLabel = styled.p`
   margin: 0 0 0.3rem;
 `;
 
-export const SocialIcons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.8rem;
-  margin: 2rem 0 1rem;
-
-  @media (max-width: 768px) { justify-content: flex-start; }
-`;
-
-export const Icon = styled.div`
-  width: 2rem;
-  height: 2rem;
-  display: grid;
-  place-items: center;
-  color: #b9c8be;
-  border: 1px solid rgba(185, 200, 190, 0.28);
-  border-radius: 50%;
-  font-size: 0.9rem;
-
-  &:hover {
-    color: #f0b36d;
-    cursor: pointer;
-  }
-`;
-
 export const Copyright = styled.div`
   padding-top: 1rem;
   color: #91a49a;

@@ -72,6 +72,20 @@ export const Input = styled.input`
   }
 `;
 
+export const GenderSelect = styled.select`
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  color: #24312d;
+  background: #fff;
+  border: 1px solid rgba(36, 49, 45, 0.2);
+  border-radius: 4px;
+
+  &:focus {
+    outline: 2px solid rgba(189, 91, 60, 0.35);
+    border-color: #bd5b3c;
+  }
+`;
+
 export const SubmitButton = styled.button`
   padding: 0.9rem 1rem;
   background-color: #bd5b3c;

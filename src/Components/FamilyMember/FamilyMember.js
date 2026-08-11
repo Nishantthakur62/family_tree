@@ -1,20 +1,21 @@
 import React from 'react';
-import { NodeContainer, GenerationRow, Branch, PartnerRow, NodeBox, ChildrenWrapper } from './FamilyMember.style';
+import { FiPlus } from 'react-icons/fi';
+import { NodeContainer, GenerationRow, Branch, PartnerRow, NodeBox, ChildrenWrapper, SiblingButton, SpouseButton, ChildButton } from './FamilyMember.style';
 
-const FamilyMember = ({ node, isRoot = false, onSelect, onOpenDetails, selectedId }) => {
+const FamilyMember = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAdd, selectedId }) => {
   return (
     <NodeContainer>
       <GenerationRow>
-        <MemberBranch node={node} isRoot={isRoot} onSelect={onSelect} onOpenDetails={onOpenDetails} selectedId={selectedId} />
+        <MemberBranch node={node} isRoot={isRoot} onSelect={onSelect} onOpenDetails={onOpenDetails} onQuickAdd={onQuickAdd} selectedId={selectedId} />
         {node.siblings?.map((sibling) => (
-          <MemberBranch key={sibling.id} node={sibling} onSelect={onSelect} onOpenDetails={onOpenDetails} selectedId={selectedId} />
+          <MemberBranch key={sibling.id} node={sibling} onSelect={onSelect} onOpenDetails={onOpenDetails} onQuickAdd={onQuickAdd} selectedId={selectedId} />
         ))}
       </GenerationRow>
     </NodeContainer>
   );
 };
 
-const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, selectedId }) => {
+const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAdd, selectedId }) => {
   const isSelected = selectedId === node.id;
 
   return (
@@ -36,6 +37,7 @@ const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, selectedI
             <small>{isRoot ? 'Family root' : node.dob || node.location || 'Family member'}</small>
           </span>
         </NodeBox>
+        <SiblingButton type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => onQuickAdd(node.id, 'sibling')} aria-label={`Add a sibling to ${node.name}`} title={`Add a sibling to ${node.name}`}><FiPlus aria-hidden="true" /></SiblingButton>
         {node.spouse && (
           <>
             <span className="partnerLink" aria-hidden="true">&amp;</span>
@@ -57,11 +59,13 @@ const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, selectedI
             </NodeBox>
           </>
         )}
+        {!node.spouse && <SpouseButton type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => onQuickAdd(node.id, 'spouse')} aria-label={`Add a spouse to ${node.name}`} title={`Add a spouse to ${node.name}`}>&amp;</SpouseButton>}
       </PartnerRow>
+      <ChildButton type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => onQuickAdd(node.id, 'child')} aria-label={`Add a child to ${node.name}`} title={`Add a child to ${node.name}`} />
       {node.children?.length > 0 && (
         <ChildrenWrapper>
           {node.children.map((child) => (
-            <FamilyMember key={child.id} node={child} onSelect={onSelect} onOpenDetails={onOpenDetails} selectedId={selectedId} />
+            <FamilyMember key={child.id} node={child} onSelect={onSelect} onOpenDetails={onOpenDetails} onQuickAdd={onQuickAdd} selectedId={selectedId} />
           ))}
         </ChildrenWrapper>
       )}

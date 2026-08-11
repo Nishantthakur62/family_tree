@@ -24,6 +24,12 @@ export const Field = styled.div`
 	gap: 0.4rem;
 `;
 
+export const SelectedPerson = styled.span`
+	min-height: 1.1rem;
+	color: #7b8c80;
+	font-size: 0.72rem;
+`;
+
 export const Label = styled.label`
 	color: #52615b;
 	font-size: 0.7rem;

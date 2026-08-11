@@ -128,6 +128,64 @@ export const NodeBox = styled.button`
   }
 `;
 
+export const SiblingButton = styled.button`
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: 0 0 1.8rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(189, 91, 60, 0.35);
+  border-radius: 50%;
+  background: #fff1e5;
+  color: #a4492f;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+
+  &:hover, &:focus-visible {
+    opacity: 1;
+    background: #f0b36d;
+    transform: scale(1.08);
+  }
+
+  &:focus-visible { outline: 3px solid rgba(189, 91, 60, 0.25); outline-offset: 2px; }
+`;
+
+export const SpouseButton = styled.button`
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(189, 91, 60, 0.3);
+  border-radius: 50%;
+  background: #fff1e5;
+  color: #bd5b3c;
+  cursor: pointer;
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  font-weight: 700;
+
+  &:hover, &:focus-visible { background: #f0b36d; }
+  &:focus-visible { outline: 3px solid rgba(189, 91, 60, 0.25); outline-offset: 2px; }
+`;
+
+export const ChildButton = styled.button`
+  position: relative;
+  z-index: 2;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin: 1.25rem 0 -0.35rem;
+  border: 2px solid #f4f1e9;
+  border-radius: 50%;
+  background: #bd5b3c;
+  box-shadow: 0 0 0 1px rgba(189, 91, 60, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+
+  &:hover, &:focus-visible { background: #a4492f; transform: scale(1.25); }
+  &:focus-visible { outline: 3px solid rgba(189, 91, 60, 0.25); outline-offset: 3px; }
+`;
+
 export const ChildrenWrapper = styled.div`
   display: flex;
   align-items: flex-start;

@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiDownload, FiMinus, FiPlus, FiMaximize, FiCrosshair, FiMove, FiTarget, FiUpload } from 'react-icons/fi';
+import { FiDownload, FiMinus, FiPlus, FiMaximize, FiCrosshair, FiMove, FiTarget, FiUpload, FiUsers } from 'react-icons/fi';
 import FamilyMember from '../FamilyMember/FamilyMember';
 import { BoardWrapper, BoardHeader, BoardTitle, BoardHint, BoardTools, CanvasHint, TreeViewport, TreeStage, TreeCanvas, ExportButton, HiddenInput, ZoomLabel, ZoomControls, ZoomButton, FitButton, ModeButton, UnlinkedSection, UnlinkedList, EmptyState, DetailsOverlay } from './DrawingBoard.style';
 import { generateUUID } from '../../utils/uuid';
 import MemberAddForm from '../MemberAddForm/MemberAddForm';
 import MoreDetailsForm from '../MoreDetailsForm/MoreDetailsForm';
 import { createArchive, getUniqueProfileId, isValidTree, normalizeTree, PROFILE_PREFIX, EXPORT_PREFIX } from '../../utils/familyData';
+import { NAME_LISTS_KEY } from '../../utils/nameLists';
+import { DEFAULT_GENERATED_NAMES } from '../../utils/nameLibrary';
 
 const findNode = (node, id) => {
   if (!node) return null;
@@ -20,6 +22,46 @@ const findNode = (node, id) => {
     if (match) return match;
   }
   return findNode(node.spouse, id);
+};
+
+const knownGenderByName = {
+  noah: 'male', nora: 'female', lena: 'female', owen: 'male', piper: 'female', elaine: 'female', daniel: 'male', james: 'male', mina: 'female',
+  ruth: 'female', elias: 'male', clara: 'female', paul: 'male', sage: 'female', wren: 'female', milo: 'male', samuel: 'male', ines: 'female',
+  michael: 'male', jonas: 'male', agnes: 'female', tronte: 'male', ulrich: 'male', martha: 'female', magnus: 'male', bernd: 'male', helge: 'male',
+  peter: 'male', charlotte: 'female', franziska: 'female', elisabeth: 'female', greta: 'female', claudia: 'female', regina: 'female', egon: 'male',
+  aleksander: 'male', bartosz: 'male', hannah: 'female', jana: 'female', katharina: 'female', reed: 'male', ben: 'male', ivy: 'female', isaac: 'male',
+  theo: 'male', june: 'female', ava: 'female', rose: 'female', mara: 'female',
+};
+
+const getNodeGender = (node) => {
+  if (node?.gender) return node.gender;
+  const firstName = node?.name?.trim().split(/\s+/)[0].toLowerCase();
+  return knownGenderByName[firstName] || null;
+};
+
+const collectNames = (node, names = new Set()) => {
+  if (!node) return names;
+  if (node.name) names.add(node.name.trim().toLowerCase());
+  collectNames(node.spouse, names);
+  (node.children || []).forEach((child) => collectNames(child, names));
+  (node.siblings || []).forEach((sibling) => collectNames(sibling, names));
+  return names;
+};
+
+const readQuickNamePool = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(NAME_LISTS_KEY) || 'null');
+    if (saved && Array.isArray(saved.maleNames) && Array.isArray(saved.femaleNames)) {
+      const customPool = [
+        ...saved.maleNames.map((name) => ({ name, gender: 'male' })),
+        ...saved.femaleNames.map((name) => ({ name, gender: 'female' })),
+      ];
+      return customPool.length > 0 ? customPool : DEFAULT_GENERATED_NAMES;
+    }
+  } catch {
+    return DEFAULT_GENERATED_NAMES;
+  }
+  return DEFAULT_GENERATED_NAMES;
 };
 
 const DrawingBoard = ({ phone }) => {
@@ -53,8 +95,12 @@ const DrawingBoard = ({ phone }) => {
     if (!viewport || !canvas) return;
 
     const availableWidth = Math.max(viewport.clientWidth - 48, 240);
+    const availableHeight = Math.max(viewport.clientHeight - 48, 240);
     const treeWidth = canvas.scrollWidth;
-    const nextZoom = treeWidth > availableWidth ? availableWidth / treeWidth : 1;
+    const treeHeight = canvas.scrollHeight;
+    const widthZoom = treeWidth > availableWidth ? availableWidth / treeWidth : 1;
+    const heightZoom = treeHeight > availableHeight ? availableHeight / treeHeight : 1;
+    const nextZoom = Math.min(widthZoom, heightZoom, 1);
     setZoom(currentZoom => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number(nextZoom.toFixed(2)))));
   }, []);
 
@@ -105,6 +151,7 @@ const DrawingBoard = ({ phone }) => {
       const root = {
         id: generateUUID(),
         name: prof.familyName,
+        ...(prof.gender ? { gender: prof.gender } : {}),
         children: [],
         siblings: [],
       };
@@ -160,12 +207,13 @@ const DrawingBoard = ({ phone }) => {
     };
   }, [tree, fitTree, zoom]);
 
-  const handleAdd = ({ name, relation, selectedId: selId }) => {
+  const addNode = ({ name, gender, relation, selectedId: selId }) => {
     if (!tree) return;
 
     const newNode = {
       id: generateUUID(),
       name,
+      ...(gender ? { gender } : {}),
       children: [],
       siblings: [],
     };
@@ -196,6 +244,26 @@ const DrawingBoard = ({ phone }) => {
       persistTree(updatedTree);
     }
     setStatus(`${name} added as ${relation}`);
+  };
+
+  const handleAdd = (details) => addNode(details);
+
+  const handleQuickAdd = (id, relation) => {
+    if (!tree) return;
+    setDetailsOpen(false);
+    const usedNames = collectNames(tree);
+    const targetGender = getNodeGender(findNode(tree, id));
+    const availableNames = readQuickNamePool().filter(({ name, gender }) => {
+      if (usedNames.has(name.toLowerCase())) return false;
+      return relation !== 'spouse' || !targetGender || gender !== targetGender;
+    });
+    if (availableNames.length === 0) {
+      setStatus('All quick-add names are in use. Add a custom person below.');
+      return;
+    }
+    const randomPerson = availableNames[Math.floor(Math.random() * availableNames.length)];
+    addNode({ name: randomPerson.name, gender: randomPerson.gender, relation, selectedId: id });
+    setSelectedId(id);
   };
 
   const handleUpdate = (details) => {
@@ -268,15 +336,15 @@ const DrawingBoard = ({ phone }) => {
     const verticalDelta = nodeRect.top + nodeRect.height / 2 - (viewportRect.top + viewportRect.height / 2);
     const maxScrollLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
     const maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
-    const nextScrollLeft = Math.min(maxScrollLeft, Math.max(0, viewport.scrollLeft + horizontalDelta / zoom));
-    const nextScrollTop = Math.min(maxScrollTop, Math.max(0, viewport.scrollTop + verticalDelta / zoom));
-    const scrollMovedX = Math.abs(nextScrollLeft - viewport.scrollLeft) > 1;
-    const scrollMovedY = Math.abs(nextScrollTop - viewport.scrollTop) > 1;
+    const nextScrollLeft = Math.min(maxScrollLeft, Math.max(0, viewport.scrollLeft + horizontalDelta));
+    const nextScrollTop = Math.min(maxScrollTop, Math.max(0, viewport.scrollTop + verticalDelta));
+    const residualX = horizontalDelta - (nextScrollLeft - viewport.scrollLeft);
+    const residualY = verticalDelta - (nextScrollTop - viewport.scrollTop);
 
-    if (!scrollMovedX || !scrollMovedY) {
+    if (Math.abs(residualX) > 1 || Math.abs(residualY) > 1) {
       setCanvasOffset((currentOffset) => ({
-        x: scrollMovedX ? currentOffset.x : currentOffset.x - horizontalDelta,
-        y: scrollMovedY ? currentOffset.y : currentOffset.y - verticalDelta,
+        x: currentOffset.x - residualX,
+        y: currentOffset.y - residualY,
       }));
     }
 
@@ -285,12 +353,17 @@ const DrawingBoard = ({ phone }) => {
       top: nextScrollTop,
       behavior: 'smooth',
     });
-  }, [zoom]);
+  }, []);
 
   const handleSelect = (id) => {
     setSelectedId(id);
-    if (!panMode) window.requestAnimationFrame(centerSelected);
   };
+
+  useEffect(() => {
+    if (!selectedId || panMode) return undefined;
+    const frame = window.requestAnimationFrame(centerSelected);
+    return () => window.cancelAnimationFrame(frame);
+  }, [selectedId, panMode, zoom, centerSelected]);
 
   useEffect(() => {
     const handleCanvasKeys = (event) => {
@@ -317,6 +390,8 @@ const DrawingBoard = ({ phone }) => {
     setSelectedId(id);
     setDetailsOpen(true);
   };
+
+  const selectedMember = tree && selectedId ? findNode(tree, selectedId) : null;
 
   useEffect(() => {
     const closeOnEscape = (event) => {
@@ -446,6 +521,7 @@ const DrawingBoard = ({ phone }) => {
           <ExportButton type="button" onClick={() => importInputRef.current?.click()}><FiUpload aria-hidden="true" /> Import JSON</ExportButton>
           <HiddenInput ref={importInputRef} type="file" accept="application/json,.json" onChange={handleImport} />
           <ExportButton type="button" onClick={handleExport} disabled={!tree}><FiDownload aria-hidden="true" /> Export JSON</ExportButton>
+          <ExportButton type="button" onClick={() => navigate(`/name-lists?return=${encodeURIComponent(`/builder/${phone}`)}`)}><FiUsers aria-hidden="true" /> Name lists</ExportButton>
           <ZoomControls aria-label="Tree zoom controls">
             <ZoomButton type="button" onClick={() => updateZoom(zoom - 0.1)} aria-label="Zoom out" title="Zoom out"><FiMinus /></ZoomButton>
             <ZoomLabel>{Math.round(zoom * 100)}%</ZoomLabel>
@@ -468,7 +544,7 @@ const DrawingBoard = ({ phone }) => {
         </EmptyState>
       ) : tree && (
         <>
-          <MemberAddForm onAdd={handleAdd} selectedId={selectedId} />
+          <MemberAddForm onAdd={handleAdd} selectedId={selectedId} selectedName={selectedMember?.name} suggestedRelation="child" />
           {detailsOpen && findNode(tree, selectedId) && (
             <DetailsOverlay onClick={() => setDetailsOpen(false)} role="presentation">
               <div onClick={(event) => event.stopPropagation()}>
@@ -498,7 +574,7 @@ const DrawingBoard = ({ phone }) => {
           >
             <TreeStage $width={canvasSize.width ? canvasSize.width * zoom : undefined} $height={canvasSize.height ? canvasSize.height * zoom : undefined}>
                 <TreeCanvas ref={canvasRef} $zoom={zoom} $offsetX={canvasOffset.x} $offsetY={canvasOffset.y}>
-                <FamilyMember node={tree} isRoot onSelect={handleSelect} onOpenDetails={handleOpenDetails} selectedId={selectedId} />
+                <FamilyMember node={tree} isRoot onSelect={handleSelect} onOpenDetails={handleOpenDetails} onQuickAdd={handleQuickAdd} selectedId={selectedId} />
               </TreeCanvas>
             </TreeStage>
           </TreeViewport>

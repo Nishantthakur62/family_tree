@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ModalOverlay, ModalContainer, ModalHeader, ModalBody, Input, SubmitButton, CloseButton } from './IntroForm.style';
+import { ModalOverlay, ModalContainer, ModalHeader, ModalBody, Input, GenderSelect, SubmitButton, CloseButton } from './IntroForm.style';
 import { useNavigate } from 'react-router-dom';
 import { PROFILE_PREFIX } from '../../utils/familyData';
 
@@ -7,6 +7,7 @@ const IntroForm = ({ onClose }) => {
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [familyName, setFamilyName] = useState('');
+  const [gender, setGender] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -35,6 +36,7 @@ const IntroForm = ({ onClose }) => {
       fullName,
       phoneNumber,
       familyName,
+      gender,
     };
 
     localStorage.setItem(`${PROFILE_PREFIX}${phoneNumber}`, JSON.stringify(formData));
@@ -70,6 +72,11 @@ const IntroForm = ({ onClose }) => {
             onChange={(e) => setFamilyName(e.target.value)}
             required
           />
+          <GenderSelect aria-label="Gender" value={gender} onChange={(e) => setGender(e.target.value)} required>
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </GenderSelect>
           {error && <p style={{ color: 'red', margin: '5px 0' }}>{error}</p>}
           <SubmitButton type="submit">Start Building</SubmitButton>
         </ModalBody>

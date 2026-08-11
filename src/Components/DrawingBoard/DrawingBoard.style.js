@@ -266,6 +266,7 @@ export const DetailsOverlay = styled.div`
 export const TreeViewport = styled.div`
   width: 100%;
   max-width: 100%;
+  user-select: none;
   min-height: 300px;
   max-height: min(68vh, 720px);
   margin: 1.25rem;
@@ -284,6 +285,8 @@ export const TreeViewport = styled.div`
   scroll-behavior: smooth;
   cursor: ${({ $panMode }) => ($panMode ? 'grab' : 'default')};
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  img { user-select: none; -webkit-user-drag: none; }
 
   &:active {
     cursor: ${({ $panMode }) => ($panMode ? 'grabbing' : 'default')};

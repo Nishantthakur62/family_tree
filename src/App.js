@@ -7,6 +7,7 @@ import Layout from './Components/Layout/Layout';
 import BuilderPage from './Pages/BuilderPage/BuilderPage';
 import ContactPage from './Pages/ContactPage/ContactPage';
 import GamePage from './Pages/GamePage/GamePage';
+import NameListsPage from './Pages/NameListsPage/NameListsPage';
 import './App.css'; 
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/builder/:phone" element={<BuilderPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/game" element={<GamePage />} />
+          <Route path="/name-lists" element={<NameListsPage />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </Layout>

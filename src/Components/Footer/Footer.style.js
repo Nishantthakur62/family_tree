@@ -1,36 +1,25 @@
 import styled from 'styled-components';
 
 export const FooterContainer = styled.footer`
-  background-color: #24312d;
+  background: #24312d;
   color: #fff;
-  padding: 3.5rem clamp(1.25rem, 6vw, 6rem) 1.25rem;
+  padding: 4.5rem clamp(1.25rem, 7vw, 7rem) 1.5rem;
 `;
 
 export const FooterTop = styled.div`
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(220px, 1.35fr) minmax(130px, 0.65fr) minmax(260px, 1fr);
   align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 2.5rem;
+  gap: 4rem;
   margin-bottom: 2rem;
 
-  > div {
-    flex: 1;
-    max-width: 260px;
-    text-align: left;
-  }
-
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-
-    > div {
-      text-align: center;
-      max-width: none;
-    }
   }
 `;
+
+export const FooterBrand = styled.div``;
 
 export const LogoImage = styled.img`
   width: 84px;
@@ -55,11 +44,36 @@ export const Tagline = styled.p`
   }
 `;
 
+export const FooterLabel = styled.p`
+  color: #f0b36d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 0.7rem;
+`;
+
+export const FooterDescription = styled.p`
+  max-width: 300px;
+  color: #91a49a;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 1.25rem 0 0;
+`;
+
 export const LinkSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1rem;
+`;
+
+export const LinkTitle = styled.h2`
+  color: #fff;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  margin: 0 0 0.2rem;
+  text-transform: uppercase;
 `;
 
 export const LinkGroup = styled.div`
@@ -85,11 +99,30 @@ export const LinkItem = styled.a`
   }
 `;
 
+export const ContactCard = styled.div`
+  display: grid;
+  justify-items: start;
+  gap: 0.65rem;
+  border-left: 2px solid #bd5b3c;
+  padding-left: 1.25rem;
+
+  @media (max-width: 768px) { justify-items: start; }
+`;
+
+export const ContactLabel = styled.p`
+  color: #f0b36d;
+  font-family: Georgia, serif;
+  font-size: 1.2rem;
+  margin: 0 0 0.3rem;
+`;
+
 export const SocialIcons = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 0.8rem;
   margin: 2rem 0 1rem;
+
+  @media (max-width: 768px) { justify-content: flex-start; }
 `;
 
 export const Icon = styled.div`

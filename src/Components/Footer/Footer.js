@@ -1,11 +1,17 @@
 import {
   FooterContainer,
   FooterTop,
+  FooterBrand,
   LogoImage,
   Tagline,
+  FooterLabel,
+  FooterDescription,
   LinkSection,
+  LinkTitle,
   LinkGroup,
   LinkItem,
+  ContactCard,
+  ContactLabel,
   SocialIcons,
   Icon,
   Copyright,
@@ -19,24 +25,28 @@ const Footer = () => {
   return (
     <FooterContainer>
       <FooterTop>
-        <div>
+        <FooterBrand>
           <LogoImage src={logo} alt="FamilyTree Logo" />
+          <FooterLabel>Keep the roots close.</FooterLabel>
           <Tagline>Preserving your legacy, one branch at a time.</Tagline>
-        </div>
+          <FooterDescription>A calm place to build your tree, save the details, and play together.</FooterDescription>
+        </FooterBrand>
         <LinkSection>
+          <LinkTitle>Explore</LinkTitle>
           <LinkGroup>
             <LinkItem as={Link} to="/">Home</LinkItem>
             <LinkItem as={Link} to="/families">Families</LinkItem>
             <LinkItem as={Link} to="/export-history">Export</LinkItem>
             <LinkItem as={Link} to="/contact">Contact</LinkItem>
-            <LinkItem as={Link} to="/game">Game</LinkItem>
+            <LinkItem as={Link} to="/game">Playroom</LinkItem>
           </LinkGroup>
         </LinkSection>
-        <LinkGroup>
+        <ContactCard>
+          <ContactLabel>Have a story to share?</ContactLabel>
           <LinkItem href="mailto:nishantthakur13579@gmail.com">nishantthakur13579@gmail.com</LinkItem>
           <LinkItem href="#">Privacy Policy</LinkItem>
           <LinkItem href="#">Terms & Conditions</LinkItem>
-        </LinkGroup>
+        </ContactCard>
       </FooterTop>
       <SocialIcons>
         <Icon><FaGlobe /></Icon>

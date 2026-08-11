@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "FamilyTree",
+  "name": "FamilyTree | Keep the stories that made you",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#24312d",
+  "background_color": "#f6f4ef",
+  "description": "Build a family tree, preserve meaningful stories, and play together."
 }

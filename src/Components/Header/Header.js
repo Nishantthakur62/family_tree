@@ -44,6 +44,7 @@ const Header = () => {
         <NavItem as={Link} to="/families" $active={isActive('/families')} aria-current={isActive('/families') ? 'page' : undefined}>Families</NavItem>
         <NavItem as={Link} to="/export-history" $active={isActive('/export-history')} aria-current={isActive('/export-history') ? 'page' : undefined}>Export</NavItem>
         <NavItem as={Link} to="/contact" $active={isActive('/contact')} aria-current={isActive('/contact') ? 'page' : undefined}>Contact</NavItem>
+        <NavItem as={Link} to="/game" $active={isActive('/game')} aria-current={isActive('/game') ? 'page' : undefined}>Game</NavItem>
         <NavCta as={Link} to="/?start=1">Build your tree <FiArrowRight aria-hidden="true" /></NavCta>
       </Nav>
 
@@ -57,6 +58,7 @@ const Header = () => {
           <NavItem as={Link} to="/families" onClick={() => setMenuOpen(false)} $active={isActive('/families')}>Families</NavItem>
           <NavItem as={Link} to="/export-history" onClick={() => setMenuOpen(false)} $active={isActive('/export-history')}>Export</NavItem>
           <NavItem as={Link} to="/contact" onClick={() => setMenuOpen(false)} $active={isActive('/contact')}>Contact</NavItem>
+          <NavItem as={Link} to="/game" onClick={() => setMenuOpen(false)} $active={isActive('/game')}>Game</NavItem>
           <NavCta as={Link} to="/?start=1" onClick={() => setMenuOpen(false)}>Build your tree <FiArrowRight aria-hidden="true" /></NavCta>
         </MobileMenu>
       )}

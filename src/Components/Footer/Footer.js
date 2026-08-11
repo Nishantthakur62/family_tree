@@ -29,10 +29,11 @@ const Footer = () => {
             <LinkItem as={Link} to="/families">Families</LinkItem>
             <LinkItem as={Link} to="/export-history">Export</LinkItem>
             <LinkItem as={Link} to="/contact">Contact</LinkItem>
+            <LinkItem as={Link} to="/game">Game</LinkItem>
           </LinkGroup>
         </LinkSection>
         <LinkGroup>
-          <LinkItem href="mailto:support@familytree.com">Support</LinkItem>
+          <LinkItem href="mailto:nishantthakur13579@gmail.com">nishantthakur13579@gmail.com</LinkItem>
           <LinkItem href="#">Privacy Policy</LinkItem>
           <LinkItem href="#">Terms & Conditions</LinkItem>
         </LinkGroup>

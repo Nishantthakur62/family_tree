@@ -32,6 +32,13 @@ export const ContactIntro = styled.div`
 	}
 
 	svg { color: #bd5b3c; }
+
+	a {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover { color: #bd5b3c; }
+	}
 `;
 
 export const Eyebrow = styled.div`

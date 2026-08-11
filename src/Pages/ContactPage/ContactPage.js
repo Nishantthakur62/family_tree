@@ -17,7 +17,7 @@ const ContactPage = () => {
           <Eyebrow>We are listening</Eyebrow>
           <Heading>Questions about your family story?</Heading>
           <Copy>Whether you need a hand with your tree or want to share an idea, send us a note. We usually reply within two working days.</Copy>
-          <p><FiMail aria-hidden="true" /> support@familytree.com</p>
+          <p><FiMail aria-hidden="true" /> <a href="mailto:nishantthakur13579@gmail.com">nishantthakur13579@gmail.com</a></p>
           <p><FiMessageCircle aria-hidden="true" /> Monday to Friday, 9am–5pm</p>
         </ContactIntro>
         {sent ? (

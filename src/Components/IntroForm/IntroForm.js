@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ModalOverlay, ModalContainer, ModalHeader, ModalBody, Input, GenderSelect, SubmitButton, CloseButton } from './IntroForm.style';
+import { ModalOverlay, ModalContainer, ModalHeader, ModalBody, Input, GenderSelect, SubmitButton, CloseButton, ButtonGroup, AutoFillButton, AutoFillHint } from './IntroForm.style';
 import { useNavigate } from 'react-router-dom';
 import { PROFILE_PREFIX } from '../../utils/familyData';
 
@@ -10,6 +10,42 @@ const IntroForm = ({ onClose }) => {
   const [gender, setGender] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const sampleData = [
+    {
+      fullName: 'Sarah Anderson',
+      phoneNumber: '5551234567',
+      familyName: 'Anderson Family',
+      gender: 'female',
+    },
+    {
+      fullName: 'Michael Chen',
+      phoneNumber: '5559876543',
+      familyName: 'Chen Family',
+      gender: 'male',
+    },
+    {
+      fullName: 'Emma Thompson',
+      phoneNumber: '5555555555',
+      familyName: 'Thompson Family',
+      gender: 'female',
+    },
+    {
+      fullName: 'James Rodriguez',
+      phoneNumber: '5554444444',
+      familyName: 'Rodriguez Family',
+      gender: 'male',
+    },
+  ];
+
+  const handleAutoFill = () => {
+    const randomData = sampleData[Math.floor(Math.random() * sampleData.length)];
+    setFullName(randomData.fullName);
+    setPhoneNumber(randomData.phoneNumber);
+    setFamilyName(randomData.familyName);
+    setGender(randomData.gender);
+    setError('');
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -78,7 +114,15 @@ const IntroForm = ({ onClose }) => {
             <option value="female">Female</option>
           </GenderSelect>
           {error && <p style={{ color: 'red', margin: '5px 0' }}>{error}</p>}
-          <SubmitButton type="submit">Start Building</SubmitButton>
+          <ButtonGroup>
+            <AutoFillButton type="button" onClick={handleAutoFill} title="Fill form with sample data to explore the app">
+              📋 Auto Fill
+            </AutoFillButton>
+            <SubmitButton type="submit">Start Building</SubmitButton>
+          </ButtonGroup>
+          <AutoFillHint>
+            👆 Try "Auto Fill" to explore the app instantly with sample data
+          </AutoFillHint>
         </ModalBody>
       </ModalContainer>
     </ModalOverlay>

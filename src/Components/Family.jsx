@@ -1,1 +1,0 @@
-import React from 'react'; const Family = () => <div>Family</div>; export default Family;

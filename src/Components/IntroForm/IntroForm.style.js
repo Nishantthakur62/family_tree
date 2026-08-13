@@ -99,3 +99,34 @@ export const SubmitButton = styled.button`
     background-color: #a4492f;
   }
 `;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
+  width: 100%;
+`;
+
+export const AutoFillButton = styled.button`
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background-color: #52615b;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #3f4945;
+  }
+`;
+
+export const AutoFillHint = styled.p`
+  margin: 10px 0 0 0;
+  font-size: 0.75rem;
+  color: #52615b;
+  text-align: center;
+  font-style: italic;
+`;

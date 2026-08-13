@@ -1,1 +1,0 @@
-import React from 'react'; const FamiliesPage = () => <div>Families Page</div>; export default FamiliesPage;

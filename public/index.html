@@ -18,6 +18,14 @@
     <meta name="twitter:title" content="FamilyTree | Keep the stories that made you" />
     <meta name="twitter:description" content="Build your family tree and preserve the stories that made you." />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!-- Geo/SEO: configured for siplab.space (assumed location: New Delhi, India) -->
+    <meta property="og:locale" content="en_US" />
+    <link rel="alternate" href="https://siplab.space/" hreflang="en" />
+    <link rel="alternate" href="https://siplab.space/" hreflang="x-default" />
+    <meta name="geo.region" content="IN" />
+    <meta name="geo.placename" content="New Delhi" />
+    <meta name="geo.position" content="28.6139;77.2090" />
+    <meta name="ICBM" content="28.6139, 77.2090" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -33,6 +41,33 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>FamilyTree | Keep the stories that made you</title>
+    <!-- Structured data (Organization + WebSite). Update name/url/address/geo as needed -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "FamilyTree",
+        "url": "https://siplab.space/",
+        "logo": "https://siplab.space/static/media/WebsiteLogo.e6b8886d3aa0c4d7696b.png",
+        "contactPoint": [{
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": "nishantthakur13579@gmail.com"
+        }],
+        "sameAs": [],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "New Delhi",
+          "addressRegion": "Delhi",
+          "addressCountry": "IN"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 28.6139,
+          "longitude": 77.2090
+        }
+      }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

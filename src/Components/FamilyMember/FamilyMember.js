@@ -15,6 +15,11 @@ const FamilyMember = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAd
   );
 };
 
+const handleQuickAddClick = (event, onQuickAdd, id, relation) => {
+  if (event.detail === 2) return;
+  onQuickAdd(id, relation);
+};
+
 const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAdd, selectedId }) => {
   const isSelected = selectedId === node.id;
 
@@ -37,7 +42,18 @@ const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAd
             <small>{isRoot ? 'Family root' : node.dob || node.location || 'Family member'}</small>
           </span>
         </NodeBox>
-        <SiblingButton type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => onQuickAdd(node.id, 'sibling')} aria-label={`Add a sibling to ${node.name}`} title={`Add a sibling to ${node.name}`}><FiPlus aria-hidden="true" /></SiblingButton>
+        <SiblingButton
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => handleQuickAddClick(event, onQuickAdd, node.id, 'sibling')}
+          onDoubleClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onQuickAdd(node.id, 'sibling', true);
+          }}
+          aria-label={`Add a sibling to ${node.name}`}
+          title={`Add a sibling to ${node.name}`}
+        ><FiPlus aria-hidden="true" /></SiblingButton>
         {node.spouse && (
           <>
             <span className="partnerLink" aria-hidden="true">&amp;</span>
@@ -59,9 +75,31 @@ const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAd
             </NodeBox>
           </>
         )}
-        {!node.spouse && <SpouseButton type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => onQuickAdd(node.id, 'spouse')} aria-label={`Add a spouse to ${node.name}`} title={`Add a spouse to ${node.name}`}>&amp;</SpouseButton>}
+        {!node.spouse && <SpouseButton
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => handleQuickAddClick(event, onQuickAdd, node.id, 'spouse')}
+          onDoubleClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onQuickAdd(node.id, 'spouse', true);
+          }}
+          aria-label={`Add a spouse to ${node.name}`}
+          title={`Add a spouse to ${node.name}`}
+        >&amp;</SpouseButton>}
       </PartnerRow>
-      <ChildButton type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => onQuickAdd(node.id, 'child')} aria-label={`Add a child to ${node.name}`} title={`Add a child to ${node.name}`} />
+      <ChildButton
+        type="button"
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={(event) => handleQuickAddClick(event, onQuickAdd, node.id, 'child')}
+        onDoubleClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onQuickAdd(node.id, 'child', true);
+        }}
+        aria-label={`Add a child to ${node.name}`}
+        title={`Add a child to ${node.name}`}
+      />
       {node.children?.length > 0 && (
         <ChildrenWrapper>
           {node.children.map((child) => (

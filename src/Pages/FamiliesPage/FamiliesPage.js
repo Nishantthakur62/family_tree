@@ -2,12 +2,14 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page, Eyebrow, Heading, Intro, Toolbar, ImportButton, HiddenInput, FamilyGrid, FamilyCard, CardTop, FamilyName, FamilyMeta, CardActions, ActionButton, EmptyState, RenameInput } from './FamiliesPage.style';
 import { getUniqueProfileId, isValidTree, normalizeTree, PROFILE_PREFIX } from '../../utils/familyData';
+import AlertModal from '../../Components/AlertModal/AlertModal';
 
 const FamiliesPage = () => {
   const fileInput = useRef(null);
   const [profiles, setProfiles] = useState(() => loadProfiles());
   const [editingKey, setEditingKey] = useState(null);
   const [draftName, setDraftName] = useState('');
+  const [pendingDelete, setPendingDelete] = useState(null);
 
   const refreshProfiles = () => setProfiles(loadProfiles());
 
@@ -24,8 +26,13 @@ const FamiliesPage = () => {
   };
 
   const deleteProfile = (profile) => {
-    if (!window.confirm(`Delete ${profile.familyName}? This cannot be undone.`)) return;
-    localStorage.removeItem(profile.key);
+    setPendingDelete(profile);
+  };
+
+  const confirmDeleteProfile = () => {
+    if (!pendingDelete) return;
+    localStorage.removeItem(pendingDelete.key);
+    setPendingDelete(null);
     refreshProfiles();
   };
 
@@ -90,6 +97,17 @@ const FamiliesPage = () => {
           ))}
         </FamilyGrid>
       )}
+
+      <AlertModal
+        isOpen={Boolean(pendingDelete)}
+        title="Delete family?"
+        message={`This will permanently remove ${pendingDelete?.familyName || 'this family'} from this browser.`}
+        confirmText="Delete"
+        cancelText="Keep it"
+        onConfirm={confirmDeleteProfile}
+        onClose={() => setPendingDelete(null)}
+        danger
+      />
     </Page>
   );
 };

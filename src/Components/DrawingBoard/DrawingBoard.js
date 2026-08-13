@@ -7,8 +7,9 @@ import { generateUUID } from '../../utils/uuid';
 import MemberAddForm from '../MemberAddForm/MemberAddForm';
 import MoreDetailsForm from '../MoreDetailsForm/MoreDetailsForm';
 import { createArchive, getUniqueProfileId, isValidTree, normalizeTree, PROFILE_PREFIX, EXPORT_PREFIX } from '../../utils/familyData';
-import { NAME_LISTS_KEY } from '../../utils/nameLists';
+import { NAME_LISTS_KEY, hasCustomNameLists, readSavedNameLists } from '../../utils/nameLists';
 import { DEFAULT_GENERATED_NAMES } from '../../utils/nameLibrary';
+import AlertModal from '../AlertModal/AlertModal';
 
 const findNode = (node, id) => {
   if (!node) return null;
@@ -76,6 +77,10 @@ const DrawingBoard = ({ phone }) => {
   const [zoom, setZoom] = useState(1);
   const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [quickAddChoices, setQuickAddChoices] = useState([]);
+  const [quickAddRelation, setQuickAddRelation] = useState('child');
+  const [quickAddSelectedId, setQuickAddSelectedId] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
   const importInputRef = useRef(null);
   const navigate = useNavigate();
   const viewportRef = useRef(null);
@@ -219,19 +224,25 @@ const DrawingBoard = ({ phone }) => {
     };
 
     let added = false;
-    const addRec = (node) => {
+    const addRec = (node, parentNode = null) => {
       if (node.id === selId) {
         if (relation === 'child') node.children = [...(node.children || []), newNode];
-        if (relation === 'sibling') node.siblings = [...(node.siblings || []), newNode];
+        if (relation === 'sibling') {
+          if (parentNode) {
+            parentNode.children = [...(parentNode.children || []), newNode];
+          } else {
+            node.siblings = [...(node.siblings || []), newNode];
+          }
+        }
         if (relation === 'spouse') {
           if (node.spouse && !window.confirm('Replace the existing spouse for this person?')) return;
           node.spouse = newNode;
         }
         added = true;
       } else {
-        node.children?.forEach(addRec);
-        node.siblings?.forEach(addRec);
-        if (node.spouse) addRec(node.spouse);
+        node.children?.forEach((child) => addRec(child, node));
+        node.siblings?.forEach((sibling) => addRec(sibling, parentNode || node));
+        if (node.spouse) addRec(node.spouse, parentNode || node);
       }
     };
     const treeCopy = JSON.parse(JSON.stringify(tree));
@@ -248,14 +259,50 @@ const DrawingBoard = ({ phone }) => {
 
   const handleAdd = (details) => addNode(details);
 
-  const handleQuickAdd = (id, relation) => {
+  const handleQuickAdd = (id, relation, forceAutoGenerate = false) => {
     if (!tree) return;
     setDetailsOpen(false);
     const usedNames = collectNames(tree);
     const targetGender = getNodeGender(findNode(tree, id));
+
+    if (forceAutoGenerate) {
+      const candidatePool = readQuickNamePool().filter(({ name, gender }) => {
+        if (usedNames.has(name.toLowerCase())) return false;
+        if (relation === 'spouse') return !targetGender || gender !== targetGender;
+        return true;
+      });
+      if (candidatePool.length === 0) {
+        setStatus('All quick-add names are in use. Add a custom person below.');
+        return;
+      }
+      const randomPerson = candidatePool[Math.floor(Math.random() * candidatePool.length)];
+      addNode({ name: randomPerson.name, gender: randomPerson.gender, relation, selectedId: id });
+      setSelectedId(id);
+      setQuickAddChoices([]);
+      setQuickAddRelation('child');
+      setQuickAddSelectedId(null);
+      return;
+    }
+
+    const savedLists = readSavedNameLists();
+    const customNames = relation === 'spouse' && targetGender
+      ? (targetGender === 'male' ? savedLists.femaleNames : savedLists.maleNames)
+      : [...savedLists.maleNames, ...savedLists.femaleNames];
+    const filteredCustomNames = [...new Set(customNames.filter((name) => !usedNames.has(name.trim().toLowerCase())))];
+
+    if (hasCustomNameLists() && filteredCustomNames.length > 0) {
+      setQuickAddChoices(filteredCustomNames);
+      setQuickAddRelation(relation);
+      setQuickAddSelectedId(id);
+      setSelectedId(id);
+      setStatus('Choose a name from your saved list');
+      return;
+    }
+
     const availableNames = readQuickNamePool().filter(({ name, gender }) => {
       if (usedNames.has(name.toLowerCase())) return false;
-      return relation !== 'spouse' || !targetGender || gender !== targetGender;
+      if (relation === 'spouse') return !targetGender || gender !== targetGender;
+      return true;
     });
     if (availableNames.length === 0) {
       setStatus('All quick-add names are in use. Add a custom person below.');
@@ -264,6 +311,9 @@ const DrawingBoard = ({ phone }) => {
     const randomPerson = availableNames[Math.floor(Math.random() * availableNames.length)];
     addNode({ name: randomPerson.name, gender: randomPerson.gender, relation, selectedId: id });
     setSelectedId(id);
+    setQuickAddChoices([]);
+    setQuickAddRelation('child');
+    setQuickAddSelectedId(null);
   };
 
   const handleUpdate = (details) => {
@@ -292,23 +342,38 @@ const DrawingBoard = ({ phone }) => {
       setStatus('The family root cannot be deleted');
       return;
     }
-    const member = findNode(tree, selectedId);
-    if (!member || !window.confirm(`Delete ${member.name} and their entire branch?`)) return;
 
+    const member = findNode(tree, selectedId);
+    if (!member) return;
+
+    setPendingDelete({
+      memberName: member.name,
+      selectedId,
+    });
+  };
+
+  const handleDeleteModalClose = () => {
+    setPendingDelete(null);
+  };
+
+  const confirmDelete = () => {
+    if (!tree || !pendingDelete) return;
+
+    const { selectedId: deleteId, memberName } = pendingDelete;
     const treeCopy = JSON.parse(JSON.stringify(tree));
     const removeRec = (node) => {
       if (!node) return false;
-      const childIndex = (node.children || []).findIndex(child => child.id === selectedId);
+      const childIndex = (node.children || []).findIndex(child => child.id === deleteId);
       if (childIndex >= 0) {
         node.children.splice(childIndex, 1);
         return true;
       }
-      const siblingIndex = (node.siblings || []).findIndex(sibling => sibling.id === selectedId);
+      const siblingIndex = (node.siblings || []).findIndex(sibling => sibling.id === deleteId);
       if (siblingIndex >= 0) {
         node.siblings.splice(siblingIndex, 1);
         return true;
       }
-      if (node.spouse?.id === selectedId) {
+      if (node.spouse?.id === deleteId) {
         delete node.spouse;
         return true;
       }
@@ -322,7 +387,8 @@ const DrawingBoard = ({ phone }) => {
     setSelectedId(treeCopy.id);
     persistTree(treeCopy);
     setDetailsOpen(false);
-    setStatus(`${member.name} and their branch were deleted`);
+    setPendingDelete(null);
+    setStatus(`${memberName} and their branch were deleted`);
   };
 
   const centerSelected = useCallback(() => {
@@ -544,7 +610,20 @@ const DrawingBoard = ({ phone }) => {
         </EmptyState>
       ) : tree && (
         <>
-          <MemberAddForm onAdd={handleAdd} selectedId={selectedId} selectedName={selectedMember?.name} suggestedRelation="child" />
+          <MemberAddForm
+            onAdd={handleAdd}
+            selectedId={selectedId}
+            selectedName={selectedMember?.name}
+            suggestedRelation={quickAddRelation || 'child'}
+            quickAddChoices={quickAddChoices}
+            quickAddRelation={quickAddRelation}
+            quickAddSelectedId={quickAddSelectedId}
+            onClearQuickAdd={() => {
+              setQuickAddChoices([]);
+              setQuickAddRelation('child');
+              setQuickAddSelectedId(null);
+            }}
+          />
           {detailsOpen && findNode(tree, selectedId) && (
             <DetailsOverlay onClick={() => setDetailsOpen(false)} role="presentation">
               <div onClick={(event) => event.stopPropagation()}>
@@ -580,6 +659,17 @@ const DrawingBoard = ({ phone }) => {
           </TreeViewport>
         </>
       )}
+
+      <AlertModal
+        isOpen={Boolean(pendingDelete)}
+        title="Delete this person?"
+        message={`This will remove ${pendingDelete?.memberName || 'this person'} and their branch from the tree.`}
+        confirmText="Delete"
+        cancelText="Keep it"
+        onConfirm={confirmDelete}
+        onClose={handleDeleteModalClose}
+        danger
+      />
     </BoardWrapper>
   );
 };

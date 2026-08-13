@@ -24,6 +24,14 @@ export const Field = styled.div`
 	gap: 0.4rem;
 `;
 
+export const SuggestionField = styled.div`
+	grid-column: 1 / -1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-top: 0.25rem;
+`;
+
 export const SelectedPerson = styled.span`
 	min-height: 1.1rem;
 	color: #7b8c80;
@@ -73,4 +81,33 @@ export const AddButton = styled.button`
 		cursor: not-allowed;
 		opacity: 0.5;
 	}
+`;
+
+export const SuggestionList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  max-height: 190px;
+  overflow-y: auto;
+  padding: 0.2rem;
+  background: #f9f5f1;
+  border: 1px solid rgba(36, 49, 45, 0.1);
+  border-radius: 8px;
+`;
+
+export const SuggestionButton = styled.button`
+  border: 1px solid rgba(36, 49, 45, 0.2);
+  background: #f6f4ef;
+  color: #24312d;
+  border-radius: 999px;
+  padding: 0.42rem 0.72rem;
+  cursor: pointer;
+  font-size: 0.76rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #ece4db;
+    border-color: rgba(189, 91, 60, 0.7);
+  }
 `;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FiArrowLeft, FiSave } from 'react-icons/fi';
-import { NAME_LISTS_KEY } from '../../utils/nameLists';
+import { NAME_LISTS_KEY, readSavedNameLists } from '../../utils/nameLists';
 import { DEFAULT_MALE_NAMES, DEFAULT_FEMALE_NAMES } from '../../utils/nameLibrary';
 import {
   ListsShell,
@@ -24,12 +24,17 @@ const defaultMaleNames = DEFAULT_MALE_NAMES;
 const defaultFemaleNames = DEFAULT_FEMALE_NAMES;
 
 const readInitialLists = () => {
-  try {
-    const saved = JSON.parse(localStorage.getItem(NAME_LISTS_KEY) || 'null');
-    if (saved?.maleNames?.length || saved?.femaleNames?.length) return saved;
-  } catch {
-    return { maleNames: defaultMaleNames, femaleNames: defaultFemaleNames };
-  }
+  const saved = readSavedNameLists();
+  const hasSavedCustomList = (() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem(NAME_LISTS_KEY) || 'null');
+      return !!raw && ((Array.isArray(raw.maleNames) && raw.maleNames.length > 0) || (Array.isArray(raw.femaleNames) && raw.femaleNames.length > 0));
+    } catch {
+      return false;
+    }
+  })();
+
+  if (hasSavedCustomList) return saved;
   return { maleNames: defaultMaleNames, femaleNames: defaultFemaleNames };
 };
 

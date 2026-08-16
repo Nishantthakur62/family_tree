@@ -59,6 +59,7 @@ const MemberAddForm = ({ onAdd, selectedId, selectedName, suggestedRelation = 'c
         <Label htmlFor="member-relation">Relationship</Label>
         <RelationSelect id="member-relation" value={relation} onChange={(event) => setRelation(event.target.value)}>
           <option value="child">Child</option>
+          <option value="parent">Parent</option>
           <option value="spouse">Spouse</option>
           <option value="sibling">Sibling</option>
         </RelationSelect>

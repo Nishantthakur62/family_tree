@@ -151,6 +151,29 @@ export const SiblingButton = styled.button`
   &:focus-visible { outline: 3px solid rgba(189, 91, 60, 0.25); outline-offset: 2px; }
 `;
 
+export const ParentButton = styled.button`
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(83, 103, 95, 0.35);
+  border-radius: 50%;
+  background: #edf3e9;
+  color: #4d655a;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+
+  &:hover, &:focus-visible {
+    opacity: 1;
+    background: #dfeadf;
+    transform: scale(1.08);
+  }
+
+  &:focus-visible { outline: 3px solid rgba(83, 103, 95, 0.25); outline-offset: 2px; }
+`;
+
 export const SpouseButton = styled.button`
   width: 1.35rem;
   height: 1.35rem;

@@ -6,7 +6,7 @@ import { BoardWrapper, BoardHeader, BoardTitle, BoardHint, BoardTools, CanvasHin
 import { generateUUID } from '../../utils/uuid';
 import MemberAddForm from '../MemberAddForm/MemberAddForm';
 import MoreDetailsForm from '../MoreDetailsForm/MoreDetailsForm';
-import { createArchive, getUniqueProfileId, isValidTree, normalizeTree, PROFILE_PREFIX, EXPORT_PREFIX } from '../../utils/familyData';
+import { createArchive, getUniqueProfileId, insertParentNode, isValidTree, normalizeTree, PROFILE_PREFIX, EXPORT_PREFIX } from '../../utils/familyData';
 import { NAME_LISTS_KEY, hasCustomNameLists, readSavedNameLists } from '../../utils/nameLists';
 import { DEFAULT_GENERATED_NAMES } from '../../utils/nameLibrary';
 import AlertModal from '../AlertModal/AlertModal';
@@ -223,6 +223,17 @@ const DrawingBoard = ({ phone }) => {
       siblings: [],
     };
 
+    const treeCopy = JSON.parse(JSON.stringify(tree));
+
+    if (relation === 'parent') {
+      const updatedTree = insertParentNode(treeCopy, selId, newNode);
+      if (!updatedTree) return;
+      setTree(updatedTree);
+      if (phone) persistTree(updatedTree);
+      setStatus(`${name} added as ${relation}`);
+      return;
+    }
+
     let added = false;
     const addRec = (node, parentNode = null) => {
       if (node.id === selId) {
@@ -245,7 +256,6 @@ const DrawingBoard = ({ phone }) => {
         if (node.spouse) addRec(node.spouse, parentNode || node);
       }
     };
-    const treeCopy = JSON.parse(JSON.stringify(tree));
     addRec(treeCopy);
     if (!added) return;
     const updatedTree = treeCopy;
@@ -268,7 +278,7 @@ const DrawingBoard = ({ phone }) => {
     if (forceAutoGenerate) {
       const candidatePool = readQuickNamePool().filter(({ name, gender }) => {
         if (usedNames.has(name.toLowerCase())) return false;
-        if (relation === 'spouse') return !targetGender || gender !== targetGender;
+        if (relation === 'spouse' || relation === 'parent') return !targetGender || gender !== targetGender;
         return true;
       });
       if (candidatePool.length === 0) {
@@ -285,7 +295,7 @@ const DrawingBoard = ({ phone }) => {
     }
 
     const savedLists = readSavedNameLists();
-    const customNames = relation === 'spouse' && targetGender
+    const customNames = (relation === 'spouse' || relation === 'parent') && targetGender
       ? (targetGender === 'male' ? savedLists.femaleNames : savedLists.maleNames)
       : [...savedLists.maleNames, ...savedLists.femaleNames];
     const filteredCustomNames = [...new Set(customNames.filter((name) => !usedNames.has(name.trim().toLowerCase())))];
@@ -301,7 +311,7 @@ const DrawingBoard = ({ phone }) => {
 
     const availableNames = readQuickNamePool().filter(({ name, gender }) => {
       if (usedNames.has(name.toLowerCase())) return false;
-      if (relation === 'spouse') return !targetGender || gender !== targetGender;
+      if (relation === 'spouse' || relation === 'parent') return !targetGender || gender !== targetGender;
       return true;
     });
     if (availableNames.length === 0) {

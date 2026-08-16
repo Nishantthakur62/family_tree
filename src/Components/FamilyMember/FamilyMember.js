@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiPlus } from 'react-icons/fi';
-import { NodeContainer, GenerationRow, Branch, PartnerRow, NodeBox, ChildrenWrapper, SiblingButton, SpouseButton, ChildButton } from './FamilyMember.style';
+import { NodeContainer, GenerationRow, Branch, PartnerRow, NodeBox, ChildrenWrapper, SiblingButton, ParentButton, SpouseButton, ChildButton } from './FamilyMember.style';
 
 const FamilyMember = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAdd, selectedId }) => {
   return (
@@ -54,6 +54,18 @@ const MemberBranch = ({ node, isRoot = false, onSelect, onOpenDetails, onQuickAd
           aria-label={`Add a sibling to ${node.name}`}
           title={`Add a sibling to ${node.name}`}
         ><FiPlus aria-hidden="true" /></SiblingButton>
+        <ParentButton
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => handleQuickAddClick(event, onQuickAdd, node.id, 'parent')}
+          onDoubleClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onQuickAdd(node.id, 'parent', true);
+          }}
+          aria-label={`Add a parent to ${node.name}`}
+          title={`Add a parent to ${node.name}`}
+        ><FiPlus aria-hidden="true" /></ParentButton>
         {node.spouse && (
           <>
             <span className="partnerLink" aria-hidden="true">&amp;</span>
